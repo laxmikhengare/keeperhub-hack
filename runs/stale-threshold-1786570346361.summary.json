@@ -1,0 +1,109 @@
+{
+  "variant": "stale-threshold",
+  "contract": "0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3",
+  "agreementRate": 0.6666666666666666,
+  "verdict": {
+    "verdict": "not_ready",
+    "agreementRate": 0.6666666666666666,
+    "disagreements": [
+      {
+        "block": 11475816,
+        "oldDecision": "shouldAct=true",
+        "newDecision": "wouldAct=false",
+        "classification": "regression",
+        "reasoning": "New workflow uses strict `>` comparison (timestamp not past deadline) instead of `>=`. At the exact deadline (1786570032), it declines to act. The tolerance window is 12 seconds—one block—and this miss occurs at T+0s. The settlement for epoch 9 is lost."
+      },
+      {
+        "block": 11475817,
+        "oldDecision": "shouldAct=false",
+        "newDecision": "wouldAct=true",
+        "classification": "regression",
+        "reasoning": "Consequence of the prior miss: epoch has advanced to 10 with new deadline 1786570092, but new workflow holds a stale cached deadline (1786570032) and acts at the wrong time. This acts outside the correct settlement window for any epoch."
+      },
+      {
+        "block": 11475821,
+        "oldDecision": "shouldAct=true",
+        "newDecision": "wouldAct=false",
+        "classification": "regression",
+        "reasoning": "Same boundary condition: new workflow declines at the exact deadline (1786570092, epoch 10). Settlement for this epoch is missed."
+      },
+      {
+        "block": 11475822,
+        "oldDecision": "shouldAct=false",
+        "newDecision": "wouldAct=true",
+        "classification": "regression",
+        "reasoning": "Stale cached deadline causes incorrect action on new epoch deadline."
+      },
+      {
+        "block": 11475826,
+        "oldDecision": "shouldAct=true",
+        "newDecision": "wouldAct=false",
+        "classification": "regression",
+        "reasoning": "Systematic miss at epoch 11 deadline (1786570152). New workflow fails the core obligation—perform settlement at the deadline."
+      },
+      {
+        "block": 11475834,
+        "oldDecision": "shouldAct=false",
+        "newDecision": "wouldAct=true",
+        "classification": "regression",
+        "reasoning": "Wrong-time activation from stale deadline cache."
+      },
+      {
+        "block": 11475838,
+        "oldDecision": "shouldAct=true",
+        "newDecision": "wouldAct=false",
+        "classification": "regression",
+        "reasoning": "Epoch 12 deadline (1786570296) missed due to `>` comparison."
+      },
+      {
+        "block": 11475839,
+        "oldDecision": "shouldAct=false",
+        "newDecision": "wouldAct=true",
+        "classification": "regression",
+        "reasoning": "Stale deadline activation."
+      },
+      {
+        "block": 11475843,
+        "oldDecision": "shouldAct=true",
+        "newDecision": "wouldAct=false",
+        "classification": "regression",
+        "reasoning": "Epoch 13 deadline (1786570356) missed."
+      },
+      {
+        "block": 11475844,
+        "oldDecision": "shouldAct=false",
+        "newDecision": "wouldAct=true",
+        "classification": "regression",
+        "reasoning": "Stale deadline activation."
+      }
+    ],
+    "blockingIssues": [
+      "The new workflow systematically misses every settlement deadline by using strict > instead of >= comparison at the deadline boundary. With a 12-second tolerance window (exactly 1 block), each miss of the exact deadline moment causes that epoch's settlement to be irrevocably lost and recorded. Over 30 blocks, 5 consecutive epochs were missed. This is a critical regression in the core obligation.",
+      "The new workflow caches the deadline and does not synchronize it with on-chain state transitions, causing incorrect activations on stale deadlines after missing the current deadline. This creates a pattern of cascading misses that would accumulate missedSettlements and degrade the protocol."
+    ],
+    "reasoning": "The new workflow exhibits a systematic failure at the core obligation: it does not settle within the deadline due to a boundary condition bug (`>` vs `>=`). Every epoch deadline is missed by the exact amount of the tolerance window (one block = 12 seconds). With zero slack and the consequence being irreversible protocol degradation, this is disqualifying. Do not cut over until the deadline comparison logic is corrected to use >= and deadline caching is synchronized with on-chain state."
+  },
+  "result": {
+    "phase": "ABORTED",
+    "journal": [
+      {
+        "at": "2026-08-12T21:33:35.455Z",
+        "phase": "PLAN",
+        "detail": "KEEPER_ROLE on 0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      },
+      {
+        "at": "2026-08-12T21:33:35.790Z",
+        "phase": "ABORTED",
+        "detail": "adjudicator returned not_ready — The new workflow systematically misses every settlement deadline by using strict > instead of >= comparison at the deadline boundary. With a 12-second tolerance window (exactly 1 block), each miss of the exact deadline moment causes that epoch's settlement to be irrevocably lost and recorded. Over 30 blocks, 5 consecutive epochs were missed. This is a critical regression in the core obligation.; The new workflow caches the deadline and does not synchronize it with on-chain state transitions, causing incorrect activations on stale deadlines after missing the current deadline. This creates a pattern of cascading misses that would accumulate missedSettlements and degrade the protocol.",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      }
+    ],
+    "unprotectedSamples": 0,
+    "degradedSamples": 0,
+    "totalSamples": 1,
+    "abortReason": "The new workflow systematically misses every settlement deadline by using strict > instead of >= comparison at the deadline boundary. With a 12-second tolerance window (exactly 1 block), each miss of the exact deadline moment causes that epoch's settlement to be irrevocably lost and recorded. Over 30 blocks, 5 consecutive epochs were missed. This is a critical regression in the core obligation.; The new workflow caches the deadline and does not synchronize it with on-chain state transitions, causing incorrect activations on stale deadlines after missing the current deadline. This creates a pattern of cascading misses that would accumulate missedSettlements and degrade the protocol."
+  }
+}

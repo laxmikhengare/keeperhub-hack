@@ -1,0 +1,95 @@
+{
+  "variant": "faithful",
+  "contract": "0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3",
+  "agreementRate": 1,
+  "verdict": {
+    "verdict": "ready",
+    "agreementRate": 1,
+    "disagreements": [],
+    "blockingIssues": [],
+    "reasoning": "The new workflow matched ground truth on every observation across 30 blocks with zero disagreements and zero missed epoch settlements. The critical settlement function operates identically to the incumbent keeper within the 12-second tolerance window, and no obligations were dropped. Safe to cut over."
+  },
+  "result": {
+    "phase": "DONE",
+    "journal": [
+      {
+        "at": "2026-08-12T21:36:08.796Z",
+        "phase": "PLAN",
+        "detail": "KEEPER_ROLE on 0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      },
+      {
+        "at": "2026-08-12T21:36:09.704Z",
+        "phase": "SIMULATE_ALL",
+        "detail": "grantRole(0x6e1a4201172f81a06E70cA176076B94e42e371f3) simulated ok · gas≈51915",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      },
+      {
+        "at": "2026-08-12T21:36:15.161Z",
+        "phase": "GRANT",
+        "detail": "new keeper granted KEEPER_ROLE",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0,
+        "txHash": "0x0f3eee2d9ced9c22bb3566389024b1276808fd274ca952dab71d8f58343a410c",
+        "txLink": "https://sepolia.etherscan.io/tx/0x0f3eee2d9ced9c22bb3566389024b1276808fd274ca952dab71d8f58343a410c",
+        "gasUsed": "73825",
+        "blockNumber": 11475861,
+        "sponsored": true
+      },
+      {
+        "at": "2026-08-12T21:37:04.474Z",
+        "phase": "VERIFY_LIVE",
+        "detail": "1/3 — epoch 17→18 · 0xeeb884c877d3f46ed34a187045038a027e99bb05c848f08e39f272172d3d925c · gas 71451",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      },
+      {
+        "at": "2026-08-12T21:38:02.726Z",
+        "phase": "VERIFY_LIVE",
+        "detail": "2/3 — epoch 18→19 · 0x7310d472ca0912e1cda727ac82c0652bf2772bc7825425c0bc3d6fc733999122 · gas 66352",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      },
+      {
+        "at": "2026-08-12T21:39:05.483Z",
+        "phase": "VERIFY_LIVE",
+        "detail": "3/3 — epoch 19→20 · 0x667628abb3cf65501711f5d063ad7e90c4c3bbc5c8d4a6612c4b8b6270dfa4a5 · gas 66340",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      },
+      {
+        "at": "2026-08-12T21:39:06.108Z",
+        "phase": "SIMULATE_ALL",
+        "detail": "revokeRole(0x57e7e59fB71c100A235842Ed69eaF46A9567B1DD) simulated ok · gas≈34406",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      },
+      {
+        "at": "2026-08-12T21:39:16.309Z",
+        "phase": "REVOKE",
+        "detail": "old keeper revoked",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0,
+        "txHash": "0x3e9d7ffdafeabcd5eeaaf0ca21654e747ea39c74e623ec02e00bf87bbd975eb8",
+        "txLink": "https://sepolia.etherscan.io/tx/0x3e9d7ffdafeabcd5eeaaf0ca21654e747ea39c74e623ec02e00bf87bbd975eb8",
+        "gasUsed": "51860",
+        "blockNumber": 11475875,
+        "sponsored": true
+      },
+      {
+        "at": "2026-08-12T21:39:16.927Z",
+        "phase": "ATTEST",
+        "detail": "verified on chain — old=false new=true · uncovered samples=0/6",
+        "unprotectedSamples": 0,
+        "degradedSamples": 0
+      }
+    ],
+    "unprotectedSamples": 0,
+    "degradedSamples": 0,
+    "totalSamples": 6,
+    "grantTx": "0x0f3eee2d9ced9c22bb3566389024b1276808fd274ca952dab71d8f58343a410c",
+    "revokeTx": "0x3e9d7ffdafeabcd5eeaaf0ca21654e747ea39c74e623ec02e00bf87bbd975eb8"
+  }
+}

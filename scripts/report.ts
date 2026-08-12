@@ -24,7 +24,9 @@ interface Summary {
     phase: string;
     unprotectedSamples: number;
     degradedSamples: number;
-    totalSamples: number;
+    totalSamples?: number;
+    /** Pre-rename field, kept so older runs still render. */
+    unprotectedBlocks?: number;
     grantTx?: string;
     revokeTx?: string;
     abortReason?: string;
@@ -96,7 +98,7 @@ function renderRun(run: Run): string {
   return `
 <section class="run ${blocked ? 'is-blocked' : 'is-done'}">
   <header>
-    <h2>${esc(s?.variant ?? run.name)}</h2>
+    <h2>${esc(s?.variant ?? run.name)}</h2>\n    <code class="dim" style="font-size:12px">${esc(run.name)}</code>
     <div class="badges">
       ${rate !== null ? `<span class="badge">agreement ${rate}%</span>` : ''}
       <span class="badge ${blocked ? 'bad' : 'good'}">${esc(s?.verdict.verdict ?? '—')}</span>
@@ -122,13 +124,16 @@ function renderRun(run: Run): string {
   </div>
 
   ${
-    s
+    s && (s.result.totalSamples ?? 0) > 0
       ? `<div class="metrics">
-          <div><b>${s.result.unprotectedSamples}</b><span>uncovered samples<em>no keeper at all — ours to own</em></span></div>
-          <div><b>${s.result.degradedSamples}</b><span>degraded samples<em>past the window — pre-existing</em></span></div>
+          <div><b>${s.result.unprotectedSamples ?? 0}</b><span>uncovered samples<em>no keeper at all — ours to own</em></span></div>
+          <div><b>${s.result.degradedSamples ?? 0}</b><span>degraded samples<em>past the window — pre-existing</em></span></div>
           <div><b>${s.result.totalSamples}</b><span>samples taken</span></div>
         </div>`
-      : ''
+      : s
+        ? `<p class="dim" style="font-size:13px;margin-top:20px">Coverage metrics were split into
+           uncovered vs degraded after this run; it predates the change.</p>`
+        : ''
   }
 </section>`;
 }

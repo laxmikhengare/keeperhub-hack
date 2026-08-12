@@ -3,11 +3,12 @@
 **The agent that takes over from a dead keeper without dropping a block.**
 
 ```
-Transactions mined            9 on Ethereum Sepolia, all through KeeperHub
+Transactions mined           16 on Ethereum Sepolia, all through KeeperHub
 Tests passing                76
 Role classification        89.7%  (26/29 · majority-class baseline 72.4%)
 Adjudication               100%   (8/8 · incl. both twin scenarios)
 Contracts migrated            1 of 5 deployed, live end to end
+Report                        docs/report.html — every run, every tx
 Uncovered samples             0   ← moments with no keeper at all
 Surfaces exercised            MCP · Web3 · Blockscout · simulation ·
                               gas sponsorship · audit trail · idempotency
@@ -17,9 +18,9 @@ Surfaces exercised            MCP · Web3 · Blockscout · simulation ·
 
 | Step | Transaction |
 |---|---|
-| grant | [`0xe0c6447d…`](https://sepolia.etherscan.io/tx/0xe0c6447db793a5f1bc5131315b0ba42fcd9894a96dfc17a5f484d206bcd52e7b) |
+| grant | [`0x0f3eee2d…`](https://sepolia.etherscan.io/tx/0x0f3eee2d9ced9c22bb3566389024b1276808fd274ca952dab71d8f58343a410c) |
 | verify ×3 | `0x478bf65e…` · `0x948d47da…` · `0x053a0f38…` — epochs 5→6→7→8, gas 71,451 / 66,352 / 66,352. Sponsored **internal** transactions relayed by KeeperHub, so they do not appear as top-level entries on the wallet; see [`runs/`](./runs) for the journal. |
-| revoke | [`0x08ee2954…`](https://sepolia.etherscan.io/tx/0x08ee29549347d355c2422c62b43349ac4d1844d61d9b911fcb237348894fdb6a) |
+| revoke | [`0x3e9d7ffd…`](https://sepolia.etherscan.io/tx/0x3e9d7ffdafeabcd5eeaaf0ca21654e747ea39c74e623ec02e00bf87bbd975eb8) **← the gated one** |
 
 ---
 
@@ -134,11 +135,13 @@ Three live runs against the same chain, same contract:
 
 | Run | Agreement | Verdict | Why |
 |---|---|---|---|
-| unverified source | **100%** | `NOT_READY` | role unresolvable — cannot revoke on unresolved evidence |
-| faithful | **100%** | `READY` | → 5 transactions, cutover complete |
-| stale-threshold | 80% | `NOT_READY` | 3 genuine regressions |
+| unverified source | **100%** | `NOT_READY` | role unresolvable — will not revoke on evidence it cannot read |
+| quiet window | **100%** | `READY` | no state transitions observed — see `LIMITS.md` |
+| faithful | **100%** | `READY` | → cutover complete, 5 transactions |
+| stale-threshold | 67% | `NOT_READY` | genuine regressions, blocked |
 
-Two runs at an identical 100% with opposite outcomes. The rate carries no signal.
+Three runs at an identical 100% agreement, and they do not share a verdict. The
+rate carries no signal on its own.
 
 On the regression run it diagnosed the planted bug from behaviour alone:
 
