@@ -1,0 +1,23 @@
+# Secrets — MUST stay out of this repo. It is public.
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Eval response cache (regenerable, and can be large)
+.cache/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Archives
+*.zip
