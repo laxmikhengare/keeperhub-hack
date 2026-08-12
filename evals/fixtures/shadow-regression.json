@@ -1,0 +1,1754 @@
+{
+  "analysis": {
+    "permissions": [
+      {
+        "contract": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+        "roleHash": "0x4b43b36766bde12c5e9cbbc37d15f8d1f769f08f54720ab370faeb4ce893753a",
+        "roleName": "LIQUIDATOR_ROLE",
+        "resolutionMethod": "source_constant",
+        "gatedFunctions": [
+          "liquidatePosition"
+        ],
+        "observedCalls": 412,
+        "lastCalledBlock": 21399960,
+        "classification": "load_bearing",
+        "confidence": 0.94,
+        "reasoning": "role gates liquidatePosition; 412 observed calls by this keeper, most recently 40 blocks before the shadow window → load_bearing"
+      }
+    ],
+    "automationIntent": {
+      "triggerKind": "block",
+      "conditionSummary": "Checks every block whether the guarded action is currently required.",
+      "conditionCall": {
+        "contract": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+        "fn": "checkUpkeep",
+        "args": [
+          "0x"
+        ]
+      },
+      "action": {
+        "contract": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+        "fn": "liquidatePosition",
+        "args": [
+          "0x"
+        ]
+      },
+      "confidence": 0.9,
+      "reasoning": "Upkeep registration exposes checkUpkeep/performUpkeep and the call history is dense and regular."
+    },
+    "declaredUnknowns": []
+  },
+  "jobSemantics": {
+    "description": "Liquidates undercollateralized borrow positions. Must fire while the position is still liquidatable — the protocol only tolerates a two-block grace period before bad debt is socialised.",
+    "targetContract": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+    "toleranceWindowSeconds": 24,
+    "consequenceOfMissedAction": "The position falls below the liquidation floor and becomes bad debt absorbed by the protocol reserve. Depositors take the loss; the action cannot be retried after the window closes."
+  },
+  "observations": [
+    {
+      "block": 21400000,
+      "timestamp": 1735689600,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "250000",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400005,
+      "timestamp": 1735689660,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "251500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400010,
+      "timestamp": 1735689720,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "253000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400015,
+      "timestamp": 1735689780,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "254500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400020,
+      "timestamp": 1735689840,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "256000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400025,
+      "timestamp": 1735689900,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "257500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400030,
+      "timestamp": 1735689960,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "259000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400035,
+      "timestamp": 1735690020,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "260500",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400040,
+      "timestamp": 1735690080,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "262000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400045,
+      "timestamp": 1735690140,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "263500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400050,
+      "timestamp": 1735690200,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "265000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400055,
+      "timestamp": 1735690260,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "266500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400060,
+      "timestamp": 1735690320,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "268000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400065,
+      "timestamp": 1735690380,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "269500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400070,
+      "timestamp": 1735690440,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "271000",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400075,
+      "timestamp": 1735690500,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "272500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400080,
+      "timestamp": 1735690560,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "274000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400085,
+      "timestamp": 1735690620,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "275500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400090,
+      "timestamp": 1735690680,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "277000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400095,
+      "timestamp": 1735690740,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "278500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400100,
+      "timestamp": 1735690800,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "280000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400105,
+      "timestamp": 1735690860,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "281500",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400110,
+      "timestamp": 1735690920,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "283000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400115,
+      "timestamp": 1735690980,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Old keeper submitted a liquidation for this position."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Health factor is 1.031 — above the liquidation floor. Position is not liquidatable; declines to act."
+      },
+      "chainState": {
+        "healthFactor": "1.031",
+        "positionSizeUsd": "284000",
+        "blocksUntilBadDebt": "n/a",
+        "oracleStalenessSeconds": "4"
+      }
+    },
+    {
+      "block": 21400120,
+      "timestamp": 1735691040,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "286000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400125,
+      "timestamp": 1735691100,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "287500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400130,
+      "timestamp": 1735691160,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "289000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400135,
+      "timestamp": 1735691220,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "290500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400140,
+      "timestamp": 1735691280,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "292000",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400145,
+      "timestamp": 1735691340,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "293500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400150,
+      "timestamp": 1735691400,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "295000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400155,
+      "timestamp": 1735691460,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "296500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400160,
+      "timestamp": 1735691520,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "298000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400165,
+      "timestamp": 1735691580,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "299500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400170,
+      "timestamp": 1735691640,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "301000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400175,
+      "timestamp": 1735691700,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "302500",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400180,
+      "timestamp": 1735691760,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "304000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400185,
+      "timestamp": 1735691820,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "305500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400190,
+      "timestamp": 1735691880,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "307000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400195,
+      "timestamp": 1735691940,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "308500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400200,
+      "timestamp": 1735692000,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "310000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400205,
+      "timestamp": 1735692060,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "311500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400210,
+      "timestamp": 1735692120,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "313000",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400215,
+      "timestamp": 1735692180,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "314500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400220,
+      "timestamp": 1735692240,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "316000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400225,
+      "timestamp": 1735692300,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "317500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400230,
+      "timestamp": 1735692360,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "319000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400235,
+      "timestamp": 1735692420,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "320500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400240,
+      "timestamp": 1735692480,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "322000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400245,
+      "timestamp": 1735692540,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "323500",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400250,
+      "timestamp": 1735692600,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "325000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400255,
+      "timestamp": 1735692660,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "326500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400260,
+      "timestamp": 1735692720,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "328000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400265,
+      "timestamp": 1735692780,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "329500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400270,
+      "timestamp": 1735692840,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "331000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400275,
+      "timestamp": 1735692900,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "332500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400280,
+      "timestamp": 1735692960,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "334000",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400285,
+      "timestamp": 1735693020,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "335500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400290,
+      "timestamp": 1735693080,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "337000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400295,
+      "timestamp": 1735693140,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "338500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400300,
+      "timestamp": 1735693200,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Old keeper submitted a liquidation for this position."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Health factor is 1.007 — marginally above the floor. Liquidating would revert; declines to act."
+      },
+      "chainState": {
+        "healthFactor": "1.007",
+        "positionSizeUsd": "312500",
+        "blocksUntilBadDebt": "n/a",
+        "oracleStalenessSeconds": "6"
+      }
+    },
+    {
+      "block": 21400305,
+      "timestamp": 1735693260,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "341500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400310,
+      "timestamp": 1735693320,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "343000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400315,
+      "timestamp": 1735693380,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "344500",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400320,
+      "timestamp": 1735693440,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "346000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400325,
+      "timestamp": 1735693500,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "347500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400330,
+      "timestamp": 1735693560,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "349000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400335,
+      "timestamp": 1735693620,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "350500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400340,
+      "timestamp": 1735693680,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "352000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400345,
+      "timestamp": 1735693740,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "353500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400350,
+      "timestamp": 1735693800,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "355000",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400355,
+      "timestamp": 1735693860,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "356500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400360,
+      "timestamp": 1735693920,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "358000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400365,
+      "timestamp": 1735693980,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "359500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400370,
+      "timestamp": 1735694040,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "361000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400375,
+      "timestamp": 1735694100,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "362500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400380,
+      "timestamp": 1735694160,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "364000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400385,
+      "timestamp": 1735694220,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "365500",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400390,
+      "timestamp": 1735694280,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "367000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400395,
+      "timestamp": 1735694340,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "368500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400400,
+      "timestamp": 1735694400,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "370000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400405,
+      "timestamp": 1735694460,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "371500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400410,
+      "timestamp": 1735694520,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "373000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400415,
+      "timestamp": 1735694580,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "374500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400420,
+      "timestamp": 1735694640,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor 0.972, position is liquidatable and inside the two-block grace period; old keeper liquidates."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Oracle price is 19 seconds old and the freshness guard requires <15s; skips this position rather than acting on data it considers stale."
+      },
+      "chainState": {
+        "healthFactor": "0.972",
+        "positionSizeUsd": "1180000",
+        "blocksUntilBadDebt": "2",
+        "oracleStalenessSeconds": "19"
+      }
+    },
+    {
+      "block": 21400425,
+      "timestamp": 1735694700,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "377500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400430,
+      "timestamp": 1735694760,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "379000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400435,
+      "timestamp": 1735694820,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "380500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400440,
+      "timestamp": 1735694880,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "382000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400445,
+      "timestamp": 1735694940,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "383500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400450,
+      "timestamp": 1735695000,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "385000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400455,
+      "timestamp": 1735695060,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "386500",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400460,
+      "timestamp": 1735695120,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "388000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400465,
+      "timestamp": 1735695180,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "389500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400470,
+      "timestamp": 1735695240,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "391000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400475,
+      "timestamp": 1735695300,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "392500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400480,
+      "timestamp": 1735695360,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "394000",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400485,
+      "timestamp": 1735695420,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "395500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    },
+    {
+      "block": 21400490,
+      "timestamp": 1735695480,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Health factor below 1.0; liquidate."
+      },
+      "chainState": {
+        "healthFactor": "0.981",
+        "positionSizeUsd": "397000",
+        "blocksUntilBadDebt": "2"
+      }
+    },
+    {
+      "block": 21400495,
+      "timestamp": 1735695540,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "healthFactor": "1.264",
+        "positionSizeUsd": "398500",
+        "blocksUntilBadDebt": "n/a"
+      }
+    }
+  ],
+  "windowBlocks": 500,
+  "averageBlockTimeSeconds": 12
+}

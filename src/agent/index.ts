@@ -13,6 +13,7 @@
  */
 
 export { analyze } from './analyst.js';
+export { adjudicate } from './adjudicator.js';
 
 export {
   AgentRefusalError,
