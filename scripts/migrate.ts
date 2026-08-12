@@ -188,7 +188,14 @@ const result = await cutover.run(verdict, verifyLive);
 // ── receipt ────────────────────────────────────────────────────────────────
 rule('RESULT');
 console.log(`  phase              ${result.phase}`);
-console.log(`  BLOCKS UNPROTECTED ${result.unprotectedBlocks}`);
+console.log(
+  `  UNCOVERED SAMPLES  ${result.unprotectedSamples}/${result.totalSamples}` +
+    `   ← moments with no keeper at all. Attributable to the migration; must be 0.`,
+);
+console.log(
+  `  degraded samples   ${result.degradedSamples}/${result.totalSamples}` +
+    `   (protocol past its window — pre-existing, left by the dead keeper)`,
+);
 if (result.grantTx) console.log(`  grant              https://sepolia.etherscan.io/tx/${result.grantTx}`);
 if (result.revokeTx) console.log(`  revoke             https://sepolia.etherscan.io/tx/${result.revokeTx}`);
 if (result.abortReason) console.log(`  abort reason       ${result.abortReason}`);

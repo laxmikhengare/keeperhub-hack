@@ -1,0 +1,78 @@
+{
+  "variant": "stale-threshold",
+  "contract": "0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3",
+  "agreementRate": 0.8,
+  "verdict": {
+    "verdict": "not_ready",
+    "agreementRate": 0.8,
+    "disagreements": [
+      {
+        "block": 11475624,
+        "oldDecision": "shouldAct=false",
+        "newDecision": "wouldAct=true",
+        "classification": "benign_old_keeper_wasteful",
+        "reasoning": "New workflow fired on stale cached deadline 1786567452, but settlement is not due until 1786567728 (48s later). This is an early trigger, not a miss, and would not advance the epoch. Harmless in isolation if deadline logic is otherwise sound."
+      },
+      {
+        "block": 11475628,
+        "oldDecision": "shouldAct=true",
+        "newDecision": "wouldAct=false",
+        "classification": "regression",
+        "reasoning": "Settlement deadline is exactly 1786567728; the new workflow requires timestamp to be strictly past that value, not equal to it. The block arrives at the deadline and the new workflow declines to act. With a 12-second tolerance window and one block = 12 seconds, this miss places the settlement at 100% of the window already consumed, and no retrial happens in the same epoch. This is a missed obligation."
+      },
+      {
+        "block": 11475629,
+        "oldDecision": "shouldAct=false",
+        "newDecision": "wouldAct=true",
+        "classification": "benign_old_keeper_wasteful",
+        "reasoning": "New deadline has rolled forward to 1786567788, but the new workflow still holds cached deadline 1786567728. It acts on stale state. The settlement at block 11475628 did not occur (due to observation 12), so the cache was never refreshed. The action is inappropriate but is a symptom of the earlier miss, not an independent violation."
+      },
+      {
+        "block": 11475633,
+        "oldDecision": "shouldAct=true",
+        "newDecision": "wouldAct=false",
+        "classification": "regression",
+        "reasoning": "Settlement deadline is exactly 1786567788; the new workflow again declines to act because timestamp is not strictly past the deadline. Identical failure mode to observation 12: missed obligation at the deadline itself. With tolerance window of 12 seconds, the window is exhausted and no recovery is possible in this epoch."
+      },
+      {
+        "block": 11475634,
+        "oldDecision": "shouldAct=false",
+        "newDecision": "wouldAct=true",
+        "classification": "benign_old_keeper_wasteful",
+        "reasoning": "New deadline 1786567848, cached deadline still 1786567788. Stale cache again. Settlement missed at block 11475633, cache never refreshed. Over-action on stale state, not an independent miss."
+      },
+      {
+        "block": 11475638,
+        "oldDecision": "shouldAct=true",
+        "newDecision": "wouldAct=false",
+        "classification": "regression",
+        "reasoning": "Settlement deadline exactly 1786567848; new workflow declines because timestamp is not strictly past. Third instance of the same failure: the new workflow has a strict-inequality bug in its deadline comparison. Every scheduled deadline is missed by this logic. With 12-second tolerance and one block per 12 seconds, every miss is fatal."
+      }
+    ],
+    "blockingIssues": [
+      "New workflow compares timestamp > deadline instead of >= deadline, systematically missing settlements that arrive exactly at the deadline. With a 12-second tolerance window (one block), there is no margin to recover; every miss is a degraded epoch that cannot be retried.",
+      "Cached deadline is not properly refreshed after epoch settlement, causing subsequent blocks to trigger on stale deadlines. This cascades from each missed settlement into further incorrect state.",
+      "Root cause must be identified and corrected: either the comparison operator or the cache invalidation logic (or both). The current implementation will record every epoch settlement as missed until fixed."
+    ],
+    "reasoning": "The new workflow systematically misses settlements at the exact deadline due to a strict inequality check (> instead of >=), compounded by a stale cached deadline. With a tolerance window of 12 seconds (one block at this chain's 12s/block rate), these are not timing delays—they are obligation failures. Three of six disagreements are regressions (observations 12, 17, 22), each a missed epoch settlement that cannot be recovered. Do not cut over until the deadline comparison logic is corrected to accept action at the deadline, not only after it."
+  },
+  "result": {
+    "phase": "ABORTED",
+    "journal": [
+      {
+        "at": "2026-08-12T20:53:07.194Z",
+        "phase": "PLAN",
+        "detail": "KEEPER_ROLE on 0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3",
+        "unprotectedBlocks": 0
+      },
+      {
+        "at": "2026-08-12T20:53:07.462Z",
+        "phase": "ABORTED",
+        "detail": "adjudicator returned not_ready — New workflow compares timestamp > deadline instead of >= deadline, systematically missing settlements that arrive exactly at the deadline. With a 12-second tolerance window (one block), there is no margin to recover; every miss is a degraded epoch that cannot be retried.; Cached deadline is not properly refreshed after epoch settlement, causing subsequent blocks to trigger on stale deadlines. This cascades from each missed settlement into further incorrect state.; Root cause must be identified and corrected: either the comparison operator or the cache invalidation logic (or both). The current implementation will record every epoch settlement as missed until fixed.",
+        "unprotectedBlocks": 1
+      }
+    ],
+    "unprotectedBlocks": 1,
+    "abortReason": "New workflow compares timestamp > deadline instead of >= deadline, systematically missing settlements that arrive exactly at the deadline. With a 12-second tolerance window (one block), there is no margin to recover; every miss is a degraded epoch that cannot be retried.; Cached deadline is not properly refreshed after epoch settlement, causing subsequent blocks to trigger on stale deadlines. This cascades from each missed settlement into further incorrect state.; Root cause must be identified and corrected: either the comparison operator or the cache invalidation logic (or both). The current implementation will record every epoch settlement as missed until fixed."
+  }
+}

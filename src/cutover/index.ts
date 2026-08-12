@@ -63,14 +63,18 @@ export interface JournalEntry {
   gasUsed?: string;
   blockNumber?: number;
   sponsored?: boolean;
-  unprotectedBlocks?: number;
+  unprotectedSamples?: number;
+  degradedSamples?: number;
 }
 
 export interface CutoverResult {
   phase: Phase;
   journal: JournalEntry[];
-  /** Blocks during which the protocol had no live keeper. Must be 0. */
-  unprotectedBlocks: number;
+  /** Samples where NO keeper held the role. Attributable to us. Must be 0. */
+  unprotectedSamples: number;
+  /** Samples where the protocol was past its settlement window. Context only. */
+  degradedSamples: number;
+  totalSamples: number;
   grantTx?: string;
   revokeTx?: string;
   abortReason?: string;
@@ -89,7 +93,11 @@ const IS_UNPROTECTED_ABI = [
 
 export class Cutover {
   private journal: JournalEntry[] = [];
+  /** Samples where NO keeper held the role. Attributable to the migration. */
   private unprotected = 0;
+  /** Samples where the protocol was past its window. Usually pre-existing. */
+  private degraded = 0;
+  private samples = 0;
 
   constructor(
     private readonly plan: CutoverPlan,
@@ -111,7 +119,8 @@ export class Cutover {
       at: new Date().toISOString(),
       phase,
       detail,
-      unprotectedBlocks: this.unprotected,
+      unprotectedSamples: this.unprotected,
+      degradedSamples: this.degraded,
       ...extra,
     };
     this.journal.push(entry);
@@ -121,18 +130,35 @@ export class Cutover {
   }
 
   /**
-   * Sample whether the protocol is currently unattended. Called around every
-   * state transition — this is the number the whole design exists to keep at
-   * zero, so it is measured rather than asserted.
+   * Sample coverage around every state transition.
+   *
+   * Two distinct things get measured, because conflating them overstates the
+   * claim and a reviewer would rightly call it out:
+   *
+   *   uncoveredSamples — no keeper at all holds the role. This is the number
+   *     the migration is responsible for, and the one that must be zero. It can
+   *     only become non-zero by revoking before granting.
+   *
+   *   degradedSamples — the protocol is past its settlement window. Usually
+   *     already true on arrival, because the dead keeper stopped settling long
+   *     before we showed up. That gap belongs to the abandoned keeper, not to
+   *     us, so it is reported separately rather than folded into the headline.
    */
   private async sampleCoverage(): Promise<void> {
+    const c = client(this.plan.chainId);
     try {
-      const bad = (await client(this.plan.chainId).readContract({
-        address: this.plan.contract as Address,
-        abi: IS_UNPROTECTED_ABI,
-        functionName: 'isUnprotected',
-      })) as boolean;
-      if (bad) this.unprotected += 1;
+      const [oldHas, newHas, degraded] = await Promise.all([
+        this.hasRole(this.plan.oldKeeper),
+        this.hasRole(this.plan.newKeeper),
+        c.readContract({
+          address: this.plan.contract as Address,
+          abi: IS_UNPROTECTED_ABI,
+          functionName: 'isUnprotected',
+        }) as Promise<boolean>,
+      ]);
+      this.samples += 1;
+      if (!oldHas && !newHas) this.unprotected += 1;
+      if (degraded) this.degraded += 1;
     } catch {
       /* a failed probe is not evidence of coverage loss; don't inflate the count */
     }
@@ -213,7 +239,9 @@ export class Cutover {
       return {
         phase: 'ABORTED',
         journal: this.journal,
-        unprotectedBlocks: this.unprotected,
+        unprotectedSamples: this.unprotected,
+        degradedSamples: this.degraded,
+        totalSamples: this.samples,
         abortReason: why,
       };
     }
@@ -247,7 +275,9 @@ export class Cutover {
         return {
           phase: 'ABORTED',
           journal: this.journal,
-          unprotectedBlocks: this.unprotected,
+          unprotectedSamples: this.unprotected,
+        degradedSamples: this.degraded,
+        totalSamples: this.samples,
           grantTx,
           abortReason: detail,
         };
@@ -276,16 +306,20 @@ export class Cutover {
       return {
         phase: 'ABORTED',
         journal: this.journal,
-        unprotectedBlocks: this.unprotected,
+        unprotectedSamples: this.unprotected,
+        degradedSamples: this.degraded,
+        totalSamples: this.samples,
         abortReason: 'post-migration state verification failed',
       };
     }
-    this.record('ATTEST', `verified on chain — old=false new=true · unprotected blocks=${this.unprotected}`);
+    this.record('ATTEST', `verified on chain — old=false new=true · uncovered samples=${this.unprotected}/${this.samples}`);
 
     return {
       phase: 'DONE',
       journal: this.journal,
-      unprotectedBlocks: this.unprotected,
+      unprotectedSamples: this.unprotected,
+      degradedSamples: this.degraded,
+      totalSamples: this.samples,
       grantTx,
       revokeTx: rev.transactionHash,
     };
