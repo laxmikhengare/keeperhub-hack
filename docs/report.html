@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Understudy — migration report</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --fg:#1a1917; --dim:#6b6862; --line:#e2ded7;
+    --card:#fff; --good:#1f6f43; --goodbg:#e8f4ed; --bad:#9a2c2c; --badbg:#fbecec;
+    --meh:#7a5a12; --mehbg:#fdf3df; --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+    --bg:#14130f; --fg:#eceae5; --dim:#9a958c; --line:#2e2b25; --card:#1c1a16;
+    --good:#7fd0a1; --goodbg:#16281e; --bad:#f0a0a0; --badbg:#2b1717;
+    --meh:#e0c078; --mehbg:#2a2314;
+  }}
+  :root[data-theme=dark]{
+    --bg:#14130f; --fg:#eceae5; --dim:#9a958c; --line:#2e2b25; --card:#1c1a16;
+    --good:#7fd0a1; --goodbg:#16281e; --bad:#f0a0a0; --badbg:#2b1717;
+    --meh:#e0c078; --mehbg:#2a2314;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font:16px/1.6 ui-serif,Georgia,serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:48px 24px 96px}
+  h1{font-size:clamp(28px,4vw,42px);line-height:1.15;margin:0 0 8px;letter-spacing:-.02em}
+  .sub{color:var(--dim);margin:0 0 32px;font-size:18px}
+  h2{font-size:24px;margin:0;letter-spacing:-.01em;text-transform:capitalize}
+  h4{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);
+     margin:28px 0 10px;font-family:var(--mono);font-weight:600}
+  code,.mono,table{font-family:var(--mono)}
+  a{color:inherit}
+  .top{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px}
+  .stat{border:1px solid var(--line);background:var(--card);border-radius:10px;
+        padding:12px 16px;min-width:130px}
+  .stat b{display:block;font-family:var(--mono);font-size:22px;letter-spacing:-.02em}
+  .stat span{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+  .run{border:1px solid var(--line);background:var(--card);border-radius:14px;
+       padding:24px;margin-bottom:28px}
+  .run.is-blocked{border-left:4px solid var(--bad)}
+  .run.is-done{border-left:4px solid var(--good)}
+  .run header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+              justify-content:space-between;margin-bottom:14px}
+  .badges{display:flex;gap:6px;flex-wrap:wrap}
+  .badge{font-family:var(--mono);font-size:12px;padding:3px 9px;border-radius:999px;
+         border:1px solid var(--line);color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+  .badge.good{background:var(--goodbg);color:var(--good);border-color:transparent}
+  .badge.bad{background:var(--badbg);color:var(--bad);border-color:transparent}
+  .verdict{margin:0;padding:14px 16px;border-radius:8px;background:var(--bg);
+           border:1px solid var(--line);font-size:15px}
+  .callout{margin-top:20px;padding:14px 16px;border-radius:8px;
+           background:var(--badbg);border:1px solid transparent}
+  .callout h4{margin:0 0 8px;color:var(--bad)}
+  .callout ul{margin:0;padding-left:18px;font-size:14px}
+  .callout li+li{margin-top:8px}
+  ul.dis{list-style:none;padding:0;margin:0}
+  ul.dis li{border-top:1px solid var(--line);padding:12px 0}
+  ul.dis p{margin:6px 0 0;font-size:14px;color:var(--dim)}
+  .tag{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:4px;
+       text-transform:uppercase;letter-spacing:.05em}
+  .tag.bad{background:var(--badbg);color:var(--bad)}
+  .tag.meh{background:var(--mehbg);color:var(--meh)}
+  .dim{color:var(--dim)}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--dim);font-weight:600;font-size:11px;
+     text-transform:uppercase;letter-spacing:.06em;padding:6px 10px 6px 0;
+     border-bottom:1px solid var(--line)}
+  td{padding:8px 10px 8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  td.num,th.num{text-align:right;padding-right:0}
+  tr.abort td{color:var(--bad)}
+  tr.ok td{color:var(--good)}
+  .phase{font-size:11px;letter-spacing:.05em}
+  .metrics{display:flex;flex-wrap:wrap;gap:24px;margin-top:24px;padding-top:20px;
+           border-top:1px solid var(--line)}
+  .metrics div{display:flex;gap:10px;align-items:baseline}
+  .metrics b{font-family:var(--mono);font-size:26px;letter-spacing:-.02em}
+  .metrics span{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+  .metrics em{display:block;font-style:normal;text-transform:none;letter-spacing:0;opacity:.75}
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
+         color:var(--dim);font-size:14px}
+</style></head><body><div class="wrap">
+
+<h1>Understudy</h1>
+<p class="sub">Migration report — every phase, every transaction, and the judgment that gated the revoke.</p>
+
+<div class="top">
+  <div class="stat"><b>2</b><span>transactions</span></div>
+  <div class="stat"><b>3</b><span>runs</span></div>
+  <div class="stat"><b>2</b><span>refused</span></div>
+  <div class="stat"><b>0</b><span>uncovered samples</span></div>
+</div>
+
+
+<section class="run is-blocked">
+  <header>
+    <h2>faithful</h2>
+    <div class="badges">
+      <span class="badge">agreement 100%</span>
+      <span class="badge bad">not_ready</span>
+      <span class="badge">ABORTED</span>
+    </div>
+  </header>
+
+  <p class="verdict">Shadow run shows perfect execution: zero disagreements across 25 observations, all settlements met within the 12-second tolerance window. However, stage 2 permission analysis declares the upstream contract unverified with confidence zero — the role and function selector cannot be resolved without source code or ABI. Before committing an irreversible revocation of the old keeper&#39;s permissions, the new keeper&#39;s actual authority to execute the settlement function must be confirmed. Shipping into an unverified permission structure is the specific failure mode this gate exists to prevent.</p>
+
+  <div class="callout"><h4>Blocking</h4><ul><li>Upstream permission analysis unresolved: no verified source code for target contract 0x34d6b90581eb625eed64532d5056c5bda3a99ce3. Cannot resolve role hash 0x0e8d2f4ff425b611852b2f1095476f82deed8adb739f9b655ca8f6872c91c6ed or confirm that function selector 0x4585e33b is correctly guarded and executable by the new keeper. Must verify ABI, role assignment, and function guardianship before irreversibly revoking old keeper access.</li></ul></div>
+  
+
+  <h4>Journal</h4>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>phase</th><th>detail</th><th class="num">gas</th><th>tx</th></tr></thead>
+      <tbody><tr class="">
+        <td><span class="phase">PLAN</span></td>
+        <td>0x0e8d2f4ff425b611852b2f1095476f82deed8adb739f9b655ca8f6872c91c6ed on 0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3</td>
+        <td></td>
+        <td></td>
+      </tr>
+<tr class="abort">
+        <td><span class="phase">ABORTED</span></td>
+        <td>adjudicator returned not_ready — Upstream permission analysis unresolved: no verified source code for target contract 0x34d6b90581eb625eed64532d5056c5bda3a99ce3. Cannot resolve role hash 0x0e8d2f4ff425b611852b2f1095476f82deed8adb739f9b655ca8f6872c91c6ed or confirm that function selector 0x4585e33b is correctly guarded and executable by the new keeper. Must verify ABI, role assignment, and function guardianship before irreversibly revoking old keeper access.</td>
+        <td></td>
+        <td></td>
+      </tr></tbody>
+    </table>
+  </div>
+
+  <div class="metrics">
+          <div><b>undefined</b><span>uncovered samples<em>no keeper at all — ours to own</em></span></div>
+          <div><b>undefined</b><span>degraded samples<em>past the window — pre-existing</em></span></div>
+          <div><b>undefined</b><span>samples taken</span></div>
+        </div>
+</section>
+
+<section class="run is-blocked">
+  <header>
+    <h2>stale-threshold</h2>
+    <div class="badges">
+      <span class="badge">agreement 80%</span>
+      <span class="badge bad">not_ready</span>
+      <span class="badge">ABORTED</span>
+    </div>
+  </header>
+
+  <p class="verdict">The new workflow systematically misses settlements at the exact deadline due to a strict inequality check (&gt; instead of &gt;=), compounded by a stale cached deadline. With a tolerance window of 12 seconds (one block at this chain&#39;s 12s/block rate), these are not timing delays—they are obligation failures. Three of six disagreements are regressions (observations 12, 17, 22), each a missed epoch settlement that cannot be recovered. Do not cut over until the deadline comparison logic is corrected to accept action at the deadline, not only after it.</p>
+
+  <div class="callout"><h4>Blocking</h4><ul><li>New workflow compares timestamp &gt; deadline instead of &gt;= deadline, systematically missing settlements that arrive exactly at the deadline. With a 12-second tolerance window (one block), there is no margin to recover; every miss is a degraded epoch that cannot be retried.</li>
+<li>Cached deadline is not properly refreshed after epoch settlement, causing subsequent blocks to trigger on stale deadlines. This cascades from each missed settlement into further incorrect state.</li>
+<li>Root cause must be identified and corrected: either the comparison operator or the cache invalidation logic (or both). The current implementation will record every epoch settlement as missed until fixed.</li></ul></div>
+  <h4>Disagreements the adjudicator classified</h4><ul class="dis"><li>
+        <span class="tag meh">benign_old_keeper_wasteful</span>
+        <span class="mono dim">block 11475624</span>
+        <p>New workflow fired on stale cached deadline 1786567452, but settlement is not due until 1786567728 (48s later). This is an early trigger, not a miss, and would not advance the epoch. Harmless in isolation if deadline logic is otherwise sound.</p>
+      </li>
+<li>
+        <span class="tag bad">regression</span>
+        <span class="mono dim">block 11475628</span>
+        <p>Settlement deadline is exactly 1786567728; the new workflow requires timestamp to be strictly past that value, not equal to it. The block arrives at the deadline and the new workflow declines to act. With a 12-second tolerance window and one block = 12 seconds, this miss places the settlement at 100% of the window already consumed, and no retrial happens in the same epoch. This is a missed obligation.</p>
+      </li>
+<li>
+        <span class="tag meh">benign_old_keeper_wasteful</span>
+        <span class="mono dim">block 11475629</span>
+        <p>New deadline has rolled forward to 1786567788, but the new workflow still holds cached deadline 1786567728. It acts on stale state. The settlement at block 11475628 did not occur (due to observation 12), so the cache was never refreshed. The action is inappropriate but is a symptom of the earlier miss, not an independent violation.</p>
+      </li>
+<li>
+        <span class="tag bad">regression</span>
+        <span class="mono dim">block 11475633</span>
+        <p>Settlement deadline is exactly 1786567788; the new workflow again declines to act because timestamp is not strictly past the deadline. Identical failure mode to observation 12: missed obligation at the deadline itself. With tolerance window of 12 seconds, the window is exhausted and no recovery is possible in this epoch.</p>
+      </li>
+<li>
+        <span class="tag meh">benign_old_keeper_wasteful</span>
+        <span class="mono dim">block 11475634</span>
+        <p>New deadline 1786567848, cached deadline still 1786567788. Stale cache again. Settlement missed at block 11475633, cache never refreshed. Over-action on stale state, not an independent miss.</p>
+      </li>
+<li>
+        <span class="tag bad">regression</span>
+        <span class="mono dim">block 11475638</span>
+        <p>Settlement deadline exactly 1786567848; new workflow declines because timestamp is not strictly past. Third instance of the same failure: the new workflow has a strict-inequality bug in its deadline comparison. Every scheduled deadline is missed by this logic. With 12-second tolerance and one block per 12 seconds, every miss is fatal.</p>
+      </li></ul>
+
+  <h4>Journal</h4>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>phase</th><th>detail</th><th class="num">gas</th><th>tx</th></tr></thead>
+      <tbody><tr class="">
+        <td><span class="phase">PLAN</span></td>
+        <td>KEEPER_ROLE on 0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3</td>
+        <td></td>
+        <td></td>
+      </tr>
+<tr class="abort">
+        <td><span class="phase">ABORTED</span></td>
+        <td>adjudicator returned not_ready — New workflow compares timestamp &gt; deadline instead of &gt;= deadline, systematically missing settlements that arrive exactly at the deadline. With a 12-second tolerance window (one block), there is no margin to recover; every miss is a degraded epoch that cannot be retried.; Cached deadline is not properly refreshed after epoch settlement, causing subsequent blocks to trigger on stale deadlines. This cascades from each missed settlement into further incorrect state.; Root cause must be identified and corrected: either the comparison operator or the cache invalidation logic (or both). The current implementation will record every epoch settlement as missed until fixed.</td>
+        <td></td>
+        <td></td>
+      </tr></tbody>
+    </table>
+  </div>
+
+  <div class="metrics">
+          <div><b>undefined</b><span>uncovered samples<em>no keeper at all — ours to own</em></span></div>
+          <div><b>undefined</b><span>degraded samples<em>past the window — pre-existing</em></span></div>
+          <div><b>undefined</b><span>samples taken</span></div>
+        </div>
+</section>
+
+<section class="run is-done">
+  <header>
+    <h2>faithful</h2>
+    <div class="badges">
+      <span class="badge">agreement 100%</span>
+      <span class="badge good">ready</span>
+      <span class="badge">DONE</span>
+    </div>
+  </header>
+
+  <p class="verdict">The new workflow matched ground truth on all 30 observations with zero disagreements. It correctly called performUpkeep at every required deadline within the 12-second tolerance window and made no spurious calls. The load-bearing KEEPER_ROLE is safe to transfer.</p>
+
+  
+  
+
+  <h4>Journal</h4>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>phase</th><th>detail</th><th class="num">gas</th><th>tx</th></tr></thead>
+      <tbody><tr class="">
+        <td><span class="phase">PLAN</span></td>
+        <td>KEEPER_ROLE on 0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3</td>
+        <td></td>
+        <td></td>
+      </tr>
+<tr class="">
+        <td><span class="phase">SIMULATE_ALL</span></td>
+        <td>grantRole(0x6e1a4201172f81a06E70cA176076B94e42e371f3) simulated ok · gas≈51915</td>
+        <td></td>
+        <td></td>
+      </tr>
+<tr class="">
+        <td><span class="phase">GRANT</span></td>
+        <td>new keeper granted KEEPER_ROLE</td>
+        <td class="num">73,825</td>
+        <td><a href="https://sepolia.etherscan.io/tx/0xe0c6447db793a5f1bc5131315b0ba42fcd9894a96dfc17a5f484d206bcd52e7b" target="_blank" rel="noopener"><code>0xe0c6447db793a5f1…</code></a></td>
+      </tr>
+<tr class="">
+        <td><span class="phase">VERIFY_LIVE</span></td>
+        <td>1/3 — epoch 5→6 · 0x478bf65eb1e0239f… · gas 71451</td>
+        <td></td>
+        <td></td>
+      </tr>
+<tr class="">
+        <td><span class="phase">VERIFY_LIVE</span></td>
+        <td>2/3 — epoch 6→7 · 0x948d47dafb49cc3c… · gas 66352</td>
+        <td></td>
+        <td></td>
+      </tr>
+<tr class="">
+        <td><span class="phase">VERIFY_LIVE</span></td>
+        <td>3/3 — epoch 7→8 · 0x053a0f38acd2ecf9… · gas 66352</td>
+        <td></td>
+        <td></td>
+      </tr>
+<tr class="">
+        <td><span class="phase">SIMULATE_ALL</span></td>
+        <td>revokeRole(0x57e7e59fB71c100A235842Ed69eaF46A9567B1DD) simulated ok · gas≈34357</td>
+        <td></td>
+        <td></td>
+      </tr>
+<tr class="">
+        <td><span class="phase">REVOKE</span></td>
+        <td>old keeper revoked</td>
+        <td class="num">51,860</td>
+        <td><a href="https://sepolia.etherscan.io/tx/0x08ee29549347d355c2422c62b43349ac4d1844d61d9b911fcb237348894fdb6a" target="_blank" rel="noopener"><code>0x08ee29549347d355…</code></a></td>
+      </tr>
+<tr class="ok">
+        <td><span class="phase">ATTEST</span></td>
+        <td>verified on chain — old=false new=true · unprotected blocks=2</td>
+        <td></td>
+        <td></td>
+      </tr></tbody>
+    </table>
+  </div>
+
+  <div class="metrics">
+          <div><b>undefined</b><span>uncovered samples<em>no keeper at all — ours to own</em></span></div>
+          <div><b>undefined</b><span>degraded samples<em>past the window — pre-existing</em></span></div>
+          <div><b>undefined</b><span>samples taken</span></div>
+        </div>
+</section>
+
+<footer>
+  Generated from the run journals in <code>runs/</code>. Every transaction links to
+  Sepolia Etherscan. Sponsored internal transactions relayed by KeeperHub do not
+  appear as top-level entries on the wallet — the journal is their record.
+</footer>
+
+</div></body></html>
