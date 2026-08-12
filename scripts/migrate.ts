@@ -159,7 +159,7 @@ async function verifyLive() {
     }
     return {
       ok: true,
-      detail: `epoch ${before}→${after} · ${r.transactionHash?.slice(0, 18)}… · gas ${r.gasUsed}`,
+      detail: `epoch ${before}→${after} · ${r.transactionHash} · gas ${r.gasUsed}`,
     };
   } catch (e) {
     return { ok: false, detail: (e as Error).message.slice(0, 160) };

@@ -98,6 +98,12 @@ export class Cutover {
   /** Samples where the protocol was past its window. Usually pre-existing. */
   private degraded = 0;
   private samples = 0;
+  /**
+   * Unique per process run. A resumed migration must not reuse the previous
+   * run's idempotency keys, or KeeperHub replays that run's cached outcome
+   * instead of executing.
+   */
+  private readonly runId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
   constructor(
     private readonly plan: CutoverPlan,
@@ -174,43 +180,70 @@ export class Cutover {
   }
 
   /**
-   * One KeeperHub write, simulated first.
-   *
-   * The idempotency key is scoped per attempt, not per action. KeeperHub caches
-   * failures under a reused key and replays them, so a per-action key means a
-   * transient failure can never be retried successfully (upstream issue #1840).
+   * One KeeperHub write: simulate, broadcast, wait for the receipt — retried
+   * under a fresh idempotency key each attempt. A simulated revert is not
+   * retried, because the chain is telling us the call itself is wrong.
    */
   private async write(
     fn: 'grantRole' | 'revokeRole',
     account: string,
     label: string,
-    attempt: number,
+    maxAttempts = 3,
   ): Promise<ExecutionResult> {
-    const args = [this.plan.roleHash, account];
     const common = {
       contract: this.plan.contract,
       chainId: this.plan.chainId,
       functionName: fn,
-      args,
+      args: [this.plan.roleHash, account],
       abi: this.plan.abi,
     };
 
-    const sim = await this.kh.executeContractCall({
-      ...common,
-      simulate: true,
-      idempotencyKey: `${label}-sim-a${attempt}`,
-    });
-    if (sim.wouldRevert) {
-      throw new Error(`${label}: simulation says it would revert — refusing to broadcast`);
-    }
-    this.record('SIMULATE_ALL', `${fn}(${account}) simulated ok · gas≈${sim.gasEstimate ?? '?'}`);
+    let lastError: Error | null = null;
 
-    const exec = await this.kh.executeContractCall({
-      ...common,
-      idempotencyKey: `${label}-real-a${attempt}`,
-    });
-    if (!exec.executionId) throw new Error(`${label}: no executionId returned`);
-    return this.kh.waitForReceipt(exec.executionId);
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      // The key is namespaced by run AND by attempt. Both halves matter:
+      //
+      //   runId    — a resumed run must not reuse the previous run's keys, or
+      //              KeeperHub replays that run's cached outcome instead of
+      //              executing.
+      //   attempt  — KeeperHub caches *failures* too. A key scoped to the
+      //              logical action means the first failure is replayed
+      //              forever and the retry can never recover (issue #1840).
+      //
+      // Transport-level duplicates of a single attempt are still deduplicated,
+      // which is the protection the parameter is actually for. Double-execution
+      // is guarded by the contract's own role state, which is where that
+      // guarantee belongs.
+      const key = `${this.runId}-${label}-a${attempt}`;
+
+      try {
+        const sim = await this.kh.executeContractCall({
+          ...common,
+          simulate: true,
+          idempotencyKey: `${key}-sim`,
+        });
+        if (sim.wouldRevert) {
+          // Not retryable: the chain is telling us this call is wrong.
+          throw new Error(`${label}: simulation says it would revert — refusing to broadcast`);
+        }
+        this.record(
+          'SIMULATE_ALL',
+          `${fn}(${account}) simulated ok · gas≈${sim.gasEstimate ?? '?'}${attempt > 1 ? ` · attempt ${attempt}` : ''}`,
+        );
+
+        const exec = await this.kh.executeContractCall({ ...common, idempotencyKey: key });
+        if (!exec.executionId) throw new Error(`${label}: no executionId returned`);
+        return await this.kh.waitForReceipt(exec.executionId);
+      } catch (e) {
+        lastError = e as Error;
+        if (lastError.message.includes('would revert')) throw lastError;
+        if (attempt === maxAttempts) break;
+        this.record('SIMULATE_ALL', `${label} attempt ${attempt} failed (${lastError.message.slice(0, 90)}) — retrying under a fresh key`);
+        await new Promise((r) => setTimeout(r, 3000 * attempt));
+      }
+    }
+
+    throw new Error(`${label}: failed after ${maxAttempts} attempts — ${lastError?.message}`);
   }
 
   /**
@@ -250,7 +283,7 @@ export class Cutover {
     if (await this.hasRole(this.plan.newKeeper)) {
       this.record('GRANT', 'new keeper already holds the role — skipping grant');
     } else {
-      const r = await this.write('grantRole', this.plan.newKeeper, 'grant', 1);
+      const r = await this.write('grantRole', this.plan.newKeeper, 'grant');
       this.record('GRANT', `new keeper granted ${this.plan.roleName ?? 'role'}`, {
         txHash: r.transactionHash,
         txLink: r.transactionLink,
@@ -287,7 +320,7 @@ export class Cutover {
 
     // ── REVOKE ───────────────────────────────────────────────────────────
     // Only now, and only ever here.
-    const rev = await this.write('revokeRole', this.plan.oldKeeper, 'revoke', 1);
+    const rev = await this.write('revokeRole', this.plan.oldKeeper, 'revoke');
     this.record('REVOKE', `old keeper revoked`, {
       txHash: rev.transactionHash,
       txLink: rev.transactionLink,

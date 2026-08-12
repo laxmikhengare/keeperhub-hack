@@ -52,10 +52,15 @@ does not have to find these out by reading the code.
 
 ## Numbers, qualified
 
-- **`93.1%` role classification and `100%` adjudication were measured on
-  `claude-opus-5`.** The live runs in the README used `claude-haiku-4-5` to stay
-  inside a $4 credit budget. Haiku is a meaningful capability step down; treat
-  the two as separate baselines. The model is set by `UNDERSTUDY_MODEL`.
+- **The headline scores are `claude-haiku-4-5`** — the model the live runs
+  actually used, so a reviewer reproduces them from a clean checkout. Role
+  classification 89.7% (26/29), adjudication 8/8. On `claude-opus-5` the same
+  suites score 93.1% and 8/8. We report the lower number because it is the one
+  the demo ran on. Set `UNDERSTUDY_MODEL` to switch.
+- **Adjudication is 100% on both models**, including the two twin scenarios at
+  an identical 97% agreement with opposite verdicts. That suite gates an
+  irreversible action, so anything below 100% would be a blocker rather than a
+  score.
 - **Read the classification baseline next to the accuracy.** The label set skews
   `load_bearing`, so answering `load_bearing` every time scores 72.4%. The
   20.7-point gap is the number that means something.
@@ -68,10 +73,9 @@ does not have to find these out by reading the code.
 
 ## Known rough edges
 
-- Idempotency keys in `Cutover.write()` are not seeded with the run id, so a
-  resumed run reuses `grant-real-a1`. Given KeeperHub caches failures under a
-  reused key (#1840), a resume after a failed grant would replay the failure.
-  The journal is resumable; this path is not yet.
+- Retries are bounded at 3 attempts with a fixed backoff. A migration that
+  fails all three leaves the old keeper in place — correct, but it needs a
+  human, and there is no alerting.
 - `verifyLive` waits up to 180s for the job to become due and then gives up. On a
   contract with a long epoch that is a false negative, not a real regression.
 - The Scout's global reverse lookup (no `--contracts`) is untested at mainnet

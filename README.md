@@ -5,8 +5,8 @@
 ```
 Transactions mined            9 on Ethereum Sepolia, all through KeeperHub
 Tests passing                76
-Role classification        93.1%  (27/29 · majority-class baseline 72.4%)
-Adjudication               100%   (8/8)
+Role classification        89.7%  (26/29 · majority-class baseline 72.4%)
+Adjudication               100%   (8/8 · incl. both twin scenarios)
 Contracts migrated            1 of 5 deployed, live end to end
 Uncovered samples             0   ← moments with no keeper at all
 Surfaces exercised            MCP · Web3 · Blockscout · simulation ·
@@ -18,7 +18,7 @@ Surfaces exercised            MCP · Web3 · Blockscout · simulation ·
 | Step | Transaction |
 |---|---|
 | grant | [`0xe0c6447d…`](https://sepolia.etherscan.io/tx/0xe0c6447db793a5f1bc5131315b0ba42fcd9894a96dfc17a5f484d206bcd52e7b) |
-| verify ×3 | [`0x478bf65e…`](https://sepolia.etherscan.io/tx/0x478bf65eb1e0239f) · [`0x948d47da…`](https://sepolia.etherscan.io/tx/0x948d47dafb49cc3c) · [`0x053a0f38…`](https://sepolia.etherscan.io/tx/0x053a0f38acd2ecf9) |
+| verify ×3 | `0x478bf65e…` · `0x948d47da…` · `0x053a0f38…` — epochs 5→6→7→8, gas 71,451 / 66,352 / 66,352. Sponsored **internal** transactions relayed by KeeperHub, so they do not appear as top-level entries on the wallet; see [`runs/`](./runs) for the journal. |
 | revoke | [`0x08ee2954…`](https://sepolia.etherscan.io/tx/0x08ee29549347d355c2422c62b43349ac4d1844d61d9b911fcb237348894fdb6a) |
 
 ---
@@ -154,9 +154,10 @@ cascades** caused by the earlier misses.
 ```ts
 if (verdict.verdict !== 'ready') {
   this.record('ABORTED', why);
-  return;                      // ← buildRevoke() is never reached
+  return;                      // ← the revoke below is never reached
 }
-await this.write('revokeRole', oldKeeper, 'revoke', 1);
+// …grant, then verify N live executions, and only then:
+await this.write('revokeRole', this.plan.oldKeeper, 'revoke');
 ```
 
 Not a disabled button. Not a confirmation dialog. On `not_ready` the code path
@@ -173,7 +174,7 @@ and nothing to send.
 | **Simulation** (`simulate: true`) | before every broadcast; `wouldRevert` aborts |
 | **Audit trail** | `get_direct_execution_status` — independently re-read receipts |
 | **Gas sponsorship** | `sponsored: true` on every transaction |
-| **Idempotency keys** | scoped **per attempt** — see issue #1840 below |
+| **Idempotency keys** | scoped per **run and attempt**, with retry — see issue #1840 below |
 | **Web3 plugin** | verified-ABI handling, EIP-1967/1822 proxy resolution |
 | **Blockscout** | the read layer, exactly as KeeperHub's own architecture post recommends |
 
@@ -235,8 +236,11 @@ Filed as we went. Each cost real time.
 
 See [`LIMITS.md`](./LIMITS.md). Short version: Sepolia not mainnet; one contract
 migrated end to end rather than the full multi-chain fan-out; the demo protocol
-is ours; agent eval scores were measured on `claude-opus-5` while the live runs
-shown here used `claude-haiku-4-5` for cost, so treat those as separate
-baselines.
+is ours; and the `stale-threshold` defect is planted (though the Adjudicator was
+never told it existed — it diagnosed the root cause from behaviour).
+
+Headline scores are on `claude-haiku-4-5`, the model the live runs used, so they
+reproduce from a clean checkout. On `claude-opus-5` the same suites score 93.1%
+and 100%. Set `UNDERSTUDY_MODEL` to switch.
 
 Apache-2.0.
