@@ -1,0 +1,9 @@
+{"at":"2026-08-12T20:47:38.578Z","phase":"PLAN","detail":"KEEPER_ROLE on 0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3","unprotectedBlocks":0}
+{"at":"2026-08-12T20:47:40.524Z","phase":"SIMULATE_ALL","detail":"grantRole(0x6e1a4201172f81a06E70cA176076B94e42e371f3) simulated ok · gas≈51915","unprotectedBlocks":1}
+{"at":"2026-08-12T20:47:52.341Z","phase":"GRANT","detail":"new keeper granted KEEPER_ROLE","unprotectedBlocks":1,"txHash":"0xe0c6447db793a5f1bc5131315b0ba42fcd9894a96dfc17a5f484d206bcd52e7b","txLink":"https://sepolia.etherscan.io/tx/0xe0c6447db793a5f1bc5131315b0ba42fcd9894a96dfc17a5f484d206bcd52e7b","gasUsed":"73825","blockNumber":11475623,"sponsored":true}
+{"at":"2026-08-12T20:48:05.427Z","phase":"VERIFY_LIVE","detail":"1/3 — epoch 5→6 · 0x478bf65eb1e0239f… · gas 71451","unprotectedBlocks":2}
+{"at":"2026-08-12T20:49:03.347Z","phase":"VERIFY_LIVE","detail":"2/3 — epoch 6→7 · 0x948d47dafb49cc3c… · gas 66352","unprotectedBlocks":2}
+{"at":"2026-08-12T20:50:05.203Z","phase":"VERIFY_LIVE","detail":"3/3 — epoch 7→8 · 0x053a0f38acd2ecf9… · gas 66352","unprotectedBlocks":2}
+{"at":"2026-08-12T20:50:05.831Z","phase":"SIMULATE_ALL","detail":"revokeRole(0x57e7e59fB71c100A235842Ed69eaF46A9567B1DD) simulated ok · gas≈34357","unprotectedBlocks":2}
+{"at":"2026-08-12T20:50:16.794Z","phase":"REVOKE","detail":"old keeper revoked","unprotectedBlocks":2,"txHash":"0x08ee29549347d355c2422c62b43349ac4d1844d61d9b911fcb237348894fdb6a","txLink":"https://sepolia.etherscan.io/tx/0x08ee29549347d355c2422c62b43349ac4d1844d61d9b911fcb237348894fdb6a","gasUsed":"51860","blockNumber":11475635,"sponsored":true}
+{"at":"2026-08-12T20:50:17.556Z","phase":"ATTEST","detail":"verified on chain — old=false new=true · unprotected blocks=2","unprotectedBlocks":2}

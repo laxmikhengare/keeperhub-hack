@@ -1,0 +1,33 @@
+{
+  "variant": "faithful",
+  "contract": "0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3",
+  "agreementRate": 1,
+  "verdict": {
+    "verdict": "not_ready",
+    "agreementRate": 1,
+    "disagreements": [],
+    "blockingIssues": [
+      "Upstream permission analysis unresolved: no verified source code for target contract 0x34d6b90581eb625eed64532d5056c5bda3a99ce3. Cannot resolve role hash 0x0e8d2f4ff425b611852b2f1095476f82deed8adb739f9b655ca8f6872c91c6ed or confirm that function selector 0x4585e33b is correctly guarded and executable by the new keeper. Must verify ABI, role assignment, and function guardianship before irreversibly revoking old keeper access."
+    ],
+    "reasoning": "Shadow run shows perfect execution: zero disagreements across 25 observations, all settlements met within the 12-second tolerance window. However, stage 2 permission analysis declares the upstream contract unverified with confidence zero — the role and function selector cannot be resolved without source code or ABI. Before committing an irreversible revocation of the old keeper's permissions, the new keeper's actual authority to execute the settlement function must be confirmed. Shipping into an unverified permission structure is the specific failure mode this gate exists to prevent."
+  },
+  "result": {
+    "phase": "ABORTED",
+    "journal": [
+      {
+        "at": "2026-08-12T20:43:37.527Z",
+        "phase": "PLAN",
+        "detail": "0x0e8d2f4ff425b611852b2f1095476f82deed8adb739f9b655ca8f6872c91c6ed on 0x34d6B90581EB625eEd64532d5056C5BdA3a99cE3",
+        "unprotectedBlocks": 0
+      },
+      {
+        "at": "2026-08-12T20:43:38.064Z",
+        "phase": "ABORTED",
+        "detail": "adjudicator returned not_ready — Upstream permission analysis unresolved: no verified source code for target contract 0x34d6b90581eb625eed64532d5056c5bda3a99ce3. Cannot resolve role hash 0x0e8d2f4ff425b611852b2f1095476f82deed8adb739f9b655ca8f6872c91c6ed or confirm that function selector 0x4585e33b is correctly guarded and executable by the new keeper. Must verify ABI, role assignment, and function guardianship before irreversibly revoking old keeper access.",
+        "unprotectedBlocks": 0
+      }
+    ],
+    "unprotectedBlocks": 0,
+    "abortReason": "Upstream permission analysis unresolved: no verified source code for target contract 0x34d6b90581eb625eed64532d5056c5bda3a99ce3. Cannot resolve role hash 0x0e8d2f4ff425b611852b2f1095476f82deed8adb739f9b655ca8f6872c91c6ed or confirm that function selector 0x4585e33b is correctly guarded and executable by the new keeper. Must verify ABI, role assignment, and function guardianship before irreversibly revoking old keeper access."
+  }
+}

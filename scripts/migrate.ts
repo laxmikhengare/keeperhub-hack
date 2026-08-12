@@ -121,6 +121,21 @@ async function verifyLive() {
   })) as bigint;
 
   try {
+    // Wait until the job is genuinely due. A keeper that fires early reverts;
+    // waiting is the correct behaviour, not a workaround.
+    const waitUntil = Date.now() + 180_000;
+    for (;;) {
+      const [due] = (await client(CHAIN_ID).readContract({
+        address: CONTRACT as Address,
+        abi: ABI as never,
+        functionName: 'checkUpkeep',
+        args: ['0x'],
+      })) as readonly [boolean, string];
+      if (due) break;
+      if (Date.now() > waitUntil) return { ok: false, detail: 'job never became due within 180s' };
+      await new Promise((r) => setTimeout(r, 6000));
+    }
+
     const exec = await kh.executeContractCall({
       contract: CONTRACT,
       chainId: CHAIN_ID,
