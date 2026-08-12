@@ -1,7 +1,7 @@
 /**
- * Build the twin ShadowReport fixtures.
+ * Build the ShadowReport fixture set for the adjudication evals.
  *
- *   npx tsx scripts/make-twins.ts
+ *   npx tsx scripts/make-shadow-fixtures.ts
  *
  * These two are the demo. Both carry exactly 100 observations with exactly 3
  * disagreements, so both land on an agreement rate of precisely 0.97 — the
@@ -245,9 +245,155 @@ const regression = build({
   ],
 });
 
+/* ── Supporting scenarios ─────────────────────────────────────────────────── */
+/* The twins carry the argument; these stop the eval set from being a two-row  */
+/* demo and cover the shapes the Adjudicator must not get wrong.               */
+
+/** No disagreements at all. Trivially ready. */
+const perfect = build({
+  contract: BENIGN_CONTRACT,
+  analysis: analysisFor(BENIGN_CONTRACT, 'KEEPER_ROLE', 'compoundRewards'),
+  jobSemantics: benign.jobSemantics,
+  agreeGroundTruthReason: 'Pending rewards exceed the compounding threshold; compound.',
+  agreeNewWorkflowReason: 'Pending rewards exceed the compounding threshold; compound.',
+  agreeState: (i) => ({ pendingRewardsWei: `${1_200_000_000_000_000_000n + BigInt(i) * 40_000_000_000_000_000n}`, thresholdWei: '1000000000000000000' }),
+  disagreements: [],
+});
+
+/**
+ * THE MIRROR OF THE TWINS. Agreement is only 80% — far below any threshold
+ * anyone would pick — yet every single disagreement is the old keeper firing
+ * needlessly. The new workflow is strictly better. Correct verdict: ready.
+ *
+ * The twins prove a high rate cannot clear a cutover. This proves a low rate
+ * cannot block one. Together they close the argument from both sides.
+ */
+const lowAgreementBenign = build({
+  contract: RISK_CONTRACT,
+  analysis: analysisFor(RISK_CONTRACT, 'LIQUIDATOR_ROLE', 'liquidatePosition'),
+  jobSemantics: {
+    description: 'Liquidates undercollateralized borrow positions. The old keeper submitted speculatively on every candidate; most attempts reverted.',
+    targetContract: RISK_CONTRACT,
+    toleranceWindowSeconds: 24,
+    consequenceOfMissedAction: 'The position falls below the liquidation floor and becomes bad debt absorbed by the protocol reserve.',
+  },
+  agreeGroundTruthReason: 'Health factor below 1.0; liquidate.',
+  agreeNewWorkflowReason: 'Health factor below 1.0; liquidate.',
+  agreeState: (i) => ({ healthFactor: i % 7 === 0 ? '0.978' : '1.301', blocksUntilBadDebt: i % 7 === 0 ? '2' : 'n/a' }),
+  disagreements: Array.from({ length: 20 }, (_, k) => ({
+    at: 2 + k * 5,
+    groundTruthReason: 'Old keeper submitted a liquidation for this position.',
+    newWorkflowReason: 'Health factor is above the liquidation floor; the call would revert. Declines to act.',
+    chainState: { healthFactor: (1.02 + k * 0.004).toFixed(3), blocksUntilBadDebt: 'n/a', oracleStalenessSeconds: '3' },
+  })),
+});
+
+/**
+ * 99% agreement — higher than the benign twin — with exactly one dropped
+ * liquidation. Correct verdict: not_ready. A threshold tuned to pass the
+ * benign twin at 97% would wave this through.
+ */
+const singleMiss = build({
+  contract: RISK_CONTRACT,
+  analysis: analysisFor(RISK_CONTRACT, 'LIQUIDATOR_ROLE', 'liquidatePosition'),
+  jobSemantics: regression.jobSemantics,
+  agreeGroundTruthReason: 'Health factor below 1.0; liquidate.',
+  agreeNewWorkflowReason: 'Health factor below 1.0; liquidate.',
+  agreeState: (i) => ({ healthFactor: i % 7 === 0 ? '0.983' : '1.288', blocksUntilBadDebt: i % 7 === 0 ? '2' : 'n/a' }),
+  disagreements: [
+    {
+      at: 44,
+      groundTruthReason: 'Health factor 0.964 with two blocks before bad debt; old keeper liquidates.',
+      newWorkflowReason: 'Position size exceeds the per-transaction cap configured in the new job; skips rather than partially liquidating.',
+      chainState: { healthFactor: '0.964', positionSizeUsd: '4200000', blocksUntilBadDebt: '2', perTxCapUsd: '2000000' },
+    },
+  ],
+});
+
+/**
+ * toleranceWindowSeconds is null. The delay may well be harmless, but nothing
+ * in the evidence proves it. Correct verdict: not_ready — unproven, not safe.
+ */
+const nullTolerance = build({
+  contract: BENIGN_CONTRACT,
+  analysis: analysisFor(BENIGN_CONTRACT, 'KEEPER_ROLE', 'rebalance'),
+  jobSemantics: {
+    description: 'Rebalances the vault between strategies when allocation drifts past its band.',
+    targetContract: BENIGN_CONTRACT,
+    toleranceWindowSeconds: null,
+    consequenceOfMissedAction: 'Unknown. The protocol documentation does not state a deadline for rebalancing, and the drift penalty has not been characterised.',
+  },
+  agreeGroundTruthReason: 'Allocation drift exceeds the band; rebalance.',
+  agreeNewWorkflowReason: 'Allocation drift exceeds the band; rebalance.',
+  agreeState: (i) => ({ driftBps: `${40 + (i % 9) * 12}`, bandBps: '100' }),
+  disagreements: [
+    {
+      at: 30,
+      groundTruthReason: 'Drift crossed the band; old keeper rebalances immediately.',
+      newWorkflowReason: 'Drift crossed the band by 3 bps; defers ~4 blocks to await a deeper liquidity window.',
+      chainState: { driftBps: '103', bandBps: '100', poolDepthUsd: '840000' },
+    },
+    {
+      at: 71,
+      groundTruthReason: 'Drift crossed the band; old keeper rebalances.',
+      newWorkflowReason: 'Drift crossed by 2 bps; defers ~4 blocks for the same reason.',
+      chainState: { driftBps: '102', bandBps: '100', poolDepthUsd: '910000' },
+    },
+  ],
+});
+
+/**
+ * The inverse regression: the new workflow ACTS when ground truth says it must
+ * not, in a context where acting is destructive. Correct verdict: not_ready.
+ * Everything else in the set has the shape "old acted, new did not".
+ */
+const actedWrongly = build({
+  contract: RISK_CONTRACT,
+  analysis: analysisFor(RISK_CONTRACT, 'LIQUIDATOR_ROLE', 'liquidatePosition'),
+  jobSemantics: {
+    description: 'Liquidates undercollateralized positions. Liquidation is irreversible and seizes collateral from the borrower.',
+    targetContract: RISK_CONTRACT,
+    toleranceWindowSeconds: 24,
+    consequenceOfMissedAction: 'A missed liquidation becomes bad debt. A WRONGFUL liquidation seizes a solvent borrower\'s collateral and cannot be reversed.',
+  },
+  agreeGroundTruthReason: 'Health factor below 1.0; liquidate.',
+  agreeNewWorkflowReason: 'Health factor below 1.0; liquidate.',
+  agreeState: (i) => ({ healthFactor: i % 7 === 0 ? '0.979' : '1.277', blocksUntilBadDebt: i % 7 === 0 ? '2' : 'n/a' }),
+  disagreements: [],
+});
+// Hand-build the inverted disagreements: ground truth says DO NOT act.
+for (const at of [37, 68]) {
+  actedWrongly.observations[at] = {
+    block: START_BLOCK + at * 5,
+    timestamp: START_TS + at * 5 * BLOCK_TIME,
+    groundTruth: { shouldAct: false, reason: 'Health factor 1.144 — position is solvent. No liquidation is permissible.' },
+    newWorkflow: { wouldAct: true, reason: 'Cached oracle price from 3 blocks ago implies health factor 0.991; would liquidate.' },
+    chainState: { healthFactor: '1.144', cachedHealthFactor: '0.991', positionSizeUsd: '640000', oracleStalenessSeconds: '36' },
+  };
+}
+
+
+/**
+ * A shadow run with NO observations. agreementRate is vacuously 1.0 — a perfect
+ * score — but there is zero evidence that anything works. Correct verdict:
+ * not_ready. This is the sharpest case in the set: it shows that even 100%
+ * agreement cannot clear a cutover.
+ */
+const noObservations: ShadowReport = {
+  analysis: analysisFor(RISK_CONTRACT, 'LIQUIDATOR_ROLE', 'liquidatePosition'),
+  jobSemantics: regression.jobSemantics,
+  observations: [],
+  windowBlocks: 0,
+  averageBlockTimeSeconds: BLOCK_TIME,
+};
+
 /* ── Verify the claim before writing ──────────────────────────────────────── */
 
 function agreementRate(r: ShadowReport): number {
+  // Mirrors computeAgreementRate in adjudicator.ts: an empty run is vacuously
+  // 100% agreement, not NaN. That vacuous 1.0 is exactly what makes
+  // shadow-no-observations.json a useful adversarial case.
+  if (r.observations.length === 0) return 1;
   const agree = r.observations.filter((o) => o.groundTruth.shouldAct === o.newWorkflow.wouldAct).length;
   return agree / r.observations.length;
 }
@@ -262,9 +408,24 @@ if (rateA !== 0.97) {
   throw new Error(`expected an agreement rate of exactly 0.97, got ${rateA}`);
 }
 
-writeFileSync(join(outDir, 'shadow-benign.json'), JSON.stringify(benign, null, 2) + '\n');
-writeFileSync(join(outDir, 'shadow-regression.json'), JSON.stringify(regression, null, 2) + '\n');
+const all: Array<[string, ShadowReport]> = [
+  ['shadow-benign.json', benign],
+  ['shadow-regression.json', regression],
+  ['shadow-perfect.json', perfect],
+  ['shadow-low-agreement-benign.json', lowAgreementBenign],
+  ['shadow-single-miss.json', singleMiss],
+  ['shadow-null-tolerance.json', nullTolerance],
+  ['shadow-acted-wrongly.json', actedWrongly],
+  ['shadow-no-observations.json', noObservations],
+];
 
-console.log(`✓ shadow-benign.json      ${benign.observations.length} observations, agreement ${rateA}`);
-console.log(`✓ shadow-regression.json  ${regression.observations.length} observations, agreement ${rateB}`);
-console.log(`  tolerance windows: ${benign.jobSemantics.toleranceWindowSeconds}s vs ${regression.jobSemantics.toleranceWindowSeconds}s`);
+for (const [name, report] of all) {
+  writeFileSync(join(outDir, name), JSON.stringify(report, null, 2) + '\n');
+  const tol = report.jobSemantics.toleranceWindowSeconds;
+  console.log(
+    `\u2713 ${name.padEnd(34)} agreement ${(agreementRate(report) * 100).toFixed(0).padStart(3)}%  ` +
+      `tolerance ${String(tol ?? 'null').padStart(4)}s  disagreements ${String(report.observations.filter((o) => o.groundTruth.shouldAct !== o.newWorkflow.wouldAct).length).padStart(2)}`,
+  );
+}
+
+console.log(`\nTWINS: both at ${rateA} — identical rate, opposite correct verdicts.`);

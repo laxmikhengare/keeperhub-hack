@@ -1,0 +1,50 @@
+{
+  "analysis": {
+    "permissions": [
+      {
+        "contract": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+        "roleHash": "0x4b43b36766bde12c5e9cbbc37d15f8d1f769f08f54720ab370faeb4ce893753a",
+        "roleName": "LIQUIDATOR_ROLE",
+        "resolutionMethod": "source_constant",
+        "gatedFunctions": [
+          "liquidatePosition"
+        ],
+        "observedCalls": 412,
+        "lastCalledBlock": 21399960,
+        "classification": "load_bearing",
+        "confidence": 0.94,
+        "reasoning": "role gates liquidatePosition; 412 observed calls by this keeper, most recently 40 blocks before the shadow window → load_bearing"
+      }
+    ],
+    "automationIntent": {
+      "triggerKind": "block",
+      "conditionSummary": "Checks every block whether the guarded action is currently required.",
+      "conditionCall": {
+        "contract": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+        "fn": "checkUpkeep",
+        "args": [
+          "0x"
+        ]
+      },
+      "action": {
+        "contract": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+        "fn": "liquidatePosition",
+        "args": [
+          "0x"
+        ]
+      },
+      "confidence": 0.9,
+      "reasoning": "Upkeep registration exposes checkUpkeep/performUpkeep and the call history is dense and regular."
+    },
+    "declaredUnknowns": []
+  },
+  "jobSemantics": {
+    "description": "Liquidates undercollateralized borrow positions. Must fire while the position is still liquidatable — the protocol only tolerates a two-block grace period before bad debt is socialised.",
+    "targetContract": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+    "toleranceWindowSeconds": 24,
+    "consequenceOfMissedAction": "The position falls below the liquidation floor and becomes bad debt absorbed by the protocol reserve. Depositors take the loss; the action cannot be retried after the window closes."
+  },
+  "observations": [],
+  "windowBlocks": 0,
+  "averageBlockTimeSeconds": 12
+}

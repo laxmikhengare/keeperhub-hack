@@ -1,0 +1,37 @@
+{
+  "deadKeeper": {
+    "address": "0x3e40d73eb977dc6a537af587d48316fee66e9c8c",
+    "chainId": 1,
+    "provider": "manual"
+  },
+  "permissions": [
+    {
+      "contract": "0xe5f60718293a4b5c6d7e8f901234567890123456",
+      "roleHash": "0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6",
+      "grantedAtBlock": 21300000,
+      "stillActive": true
+    },
+    {
+      "contract": "0xe5f60718293a4b5c6d7e8f901234567890123456",
+      "roleHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "grantedAtBlock": 21300000,
+      "stillActive": true
+    }
+  ],
+  "contracts": {
+    "0xe5f60718293a4b5c6d7e8f901234567890123456": {
+      "address": "0xe5f60718293a4b5c6d7e8f901234567890123456",
+      "name": "TransparentProxy",
+      "isProxy": true,
+      "implementationAddress": "0xf60718293a4b5c6d7e8f90123456789012345678",
+      "verifiedSource": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.19;\n\n/// @notice Minimal EIP-1967 proxy. All logic lives behind the implementation slot.\ncontract TransparentProxy {\n    bytes32 internal constant _IMPLEMENTATION_SLOT =\n        0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;\n\n    fallback() external payable {\n        assembly {\n            let impl := sload(_IMPLEMENTATION_SLOT)\n            calldatacopy(0, 0, calldatasize())\n            let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)\n            returndatacopy(0, 0, returndatasize())\n            switch result\n            case 0 { revert(0, returndatasize()) }\n            default { return(0, returndatasize()) }\n        }\n    }\n}\n",
+      "abi": null
+    }
+  },
+  "callHistory": [],
+  "chainContext": {
+    "chainId": 1,
+    "chainName": "ethereum-mainnet",
+    "currentBlock": 21500000
+  }
+}

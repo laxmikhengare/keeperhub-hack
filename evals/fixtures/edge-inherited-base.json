@@ -1,0 +1,73 @@
+{
+  "deadKeeper": {
+    "address": "0x3e40d73eb977dc6a537af587d48316fee66e9c8c",
+    "chainId": 1,
+    "provider": "manual"
+  },
+  "permissions": [
+    {
+      "contract": "0xc3d4e5f60718293a4b5c6d7e8f90123456789012",
+      "roleHash": "0x300f9ae985dc711960f7a4d1dd013f9c19ecf40bff149522ab7523b2187a3846",
+      "grantedAtBlock": 21200000,
+      "stillActive": true
+    },
+    {
+      "contract": "0xc3d4e5f60718293a4b5c6d7e8f90123456789012",
+      "roleHash": "0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a",
+      "grantedAtBlock": 21200000,
+      "stillActive": true
+    }
+  ],
+  "contracts": {
+    "0xc3d4e5f60718293a4b5c6d7e8f90123456789012": {
+      "address": "0xc3d4e5f60718293a4b5c6d7e8f90123456789012",
+      "name": "SettlementEngine",
+      "isProxy": false,
+      "implementationAddress": null,
+      "verifiedSource": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.20;\n\nimport \"./base/SettlementRoles.sol\"; // <- NOT included in this bundle\nimport \"@openzeppelin/contracts/access/AccessControl.sol\";\n\n/// @notice Settles trading epochs. Role constants are declared in SettlementRoles.\ncontract SettlementEngine is SettlementRoles, AccessControl {\n    event EpochSettled(uint256 indexed epoch, uint256 notional);\n\n    uint256 public currentEpoch;\n\n    /// @dev SETTLEMENT_ROLE is declared in SettlementRoles.sol, not here.\n    function settle(uint256 notional) external onlyRole(SETTLEMENT_ROLE) {\n        currentEpoch += 1;\n        emit EpochSettled(currentEpoch, notional);\n    }\n\n    function pause() external onlyRole(PAUSER_ROLE) {\n        _pause();\n    }\n}\n",
+      "abi": [
+        {
+          "type": "function",
+          "name": "settle",
+          "inputs": [
+            {
+              "name": "notional",
+              "type": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "pause",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "currentEpoch",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ]
+    }
+  },
+  "callHistory": [
+    {
+      "contract": "0xc3d4e5f60718293a4b5c6d7e8f90123456789012",
+      "selector": "0x9d2f1e77",
+      "functionName": "settle",
+      "count": 2451,
+      "firstBlock": 21201000,
+      "lastBlock": 21499940
+    }
+  ],
+  "chainContext": {
+    "chainId": 1,
+    "chainName": "ethereum-mainnet",
+    "currentBlock": 21500000
+  }
+}

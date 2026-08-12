@@ -1,0 +1,96 @@
+{
+  "deadKeeper": {
+    "address": "0x3e40d73eb977dc6a537af587d48316fee66e9c8c",
+    "chainId": 1,
+    "provider": "manual"
+  },
+  "permissions": [
+    {
+      "contract": "0x0718293a4b5c6d7e8f9012345678901234567890",
+      "roleHash": "0xfc8737ab85eb45125971625a9ebdb75cc78e01d5c1fa80c4c6e5203f47bc4fab",
+      "grantedAtBlock": 20800000,
+      "stillActive": true
+    },
+    {
+      "contract": "0x0718293a4b5c6d7e8f9012345678901234567890",
+      "roleHash": "0x6bd6b5318a46e5fff572d5e4258a20774aab40cc35ac7680654b9081fcc82f80",
+      "grantedAtBlock": 20800000,
+      "stillActive": true
+    },
+    {
+      "contract": "0x0718293a4b5c6d7e8f9012345678901234567890",
+      "roleHash": "0x26a560d834a19637eccba4611bbc09fb32970bb627da0a70f14f83fdc9822cbc",
+      "grantedAtBlock": 20800000,
+      "stillActive": true
+    }
+  ],
+  "contracts": {
+    "0x0718293a4b5c6d7e8f9012345678901234567890": {
+      "address": "0x0718293a4b5c6d7e8f9012345678901234567890",
+      "name": "Collection",
+      "isProxy": false,
+      "implementationAddress": null,
+      "verifiedSource": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.20;\n\nimport \"@openzeppelin/contracts/access/AccessControl.sol\";\n\n/// @notice Collection contract. The allowlist mechanism was retired at launch.\ncontract Collection is AccessControl {\n    bytes32 public constant KEEPER_ROLE = keccak256(\"KEEPER_ROLE\");\n    bytes32 public constant METADATA_ROLE = keccak256(\"METADATA_ROLE\");\n    bytes32 public constant ALLOWLIST_ROLE = keccak256(\"ALLOWLIST_ROLE\");\n\n    string public baseURI;\n    bool public allowlistActive = false;\n    uint256 public lastSync;\n\n    /// @dev The live automation path. Runs every epoch.\n    function performUpkeep(bytes calldata) external onlyRole(KEEPER_ROLE) {\n        lastSync = block.timestamp;\n    }\n\n    /// @notice Updates the metadata base URI.\n    /// @dev Cosmetic only. The team multisig and three other operators also hold\n    ///      METADATA_ROLE; this keeper was granted it during setup and never used it.\n    function setBaseURI(string calldata uri) external onlyRole(METADATA_ROLE) {\n        baseURI = uri;\n    }\n\n    /// @notice Adds an address to the mint allowlist.\n    /// @dev DEPRECATED. allowlistActive has been false since deployment and the\n    ///      public mint has closed. This function has no reachable effect.\n    function addToAllowlist(address account) external onlyRole(ALLOWLIST_ROLE) {\n        require(allowlistActive, \"ALLOWLIST_DISABLED\");\n        _allowlist[account] = true;\n    }\n\n    mapping(address => bool) private _allowlist;\n}\n",
+      "abi": [
+        {
+          "type": "function",
+          "name": "performUpkeep",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "setBaseURI",
+          "inputs": [
+            {
+              "name": "uri",
+              "type": "string"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "addToAllowlist",
+          "inputs": [
+            {
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "allowlistActive",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ]
+    }
+  },
+  "callHistory": [
+    {
+      "contract": "0x0718293a4b5c6d7e8f9012345678901234567890",
+      "selector": "0x4585e33b",
+      "functionName": "performUpkeep",
+      "count": 5204,
+      "firstBlock": 20801000,
+      "lastBlock": 21499880
+    }
+  ],
+  "chainContext": {
+    "chainId": 1,
+    "chainName": "ethereum-mainnet",
+    "currentBlock": 21500000
+  }
+}

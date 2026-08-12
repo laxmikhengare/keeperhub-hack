@@ -1,0 +1,1651 @@
+{
+  "analysis": {
+    "permissions": [
+      {
+        "contract": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "roleHash": "0x4b43b36766bde12c5e9cbbc37d15f8d1f769f08f54720ab370faeb4ce893753a",
+        "roleName": "KEEPER_ROLE",
+        "resolutionMethod": "source_constant",
+        "gatedFunctions": [
+          "compoundRewards"
+        ],
+        "observedCalls": 412,
+        "lastCalledBlock": 21399960,
+        "classification": "load_bearing",
+        "confidence": 0.94,
+        "reasoning": "role gates compoundRewards; 412 observed calls by this keeper, most recently 40 blocks before the shadow window → load_bearing"
+      }
+    ],
+    "automationIntent": {
+      "triggerKind": "block",
+      "conditionSummary": "Checks every block whether the guarded action is currently required.",
+      "conditionCall": {
+        "contract": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "fn": "checkUpkeep",
+        "args": [
+          "0x"
+        ]
+      },
+      "action": {
+        "contract": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "fn": "compoundRewards",
+        "args": [
+          "0x"
+        ]
+      },
+      "confidence": 0.9,
+      "reasoning": "Upkeep registration exposes checkUpkeep/performUpkeep and the call history is dense and regular."
+    },
+    "declaredUnknowns": []
+  },
+  "jobSemantics": {
+    "description": "Compounds accrued staking rewards back into the vault. Runs opportunistically whenever pending rewards exceed the gas cost of compounding.",
+    "targetContract": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+    "toleranceWindowSeconds": 3600,
+    "consequenceOfMissedAction": "Rewards continue accruing and are compounded on the next run. A delayed compound costs a negligible amount of foregone yield; nothing is lost and no position is at risk."
+  },
+  "observations": [
+    {
+      "block": 21400000,
+      "timestamp": 1735689600,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1200000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400005,
+      "timestamp": 1735689660,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1240000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400010,
+      "timestamp": 1735689720,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1280000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400015,
+      "timestamp": 1735689780,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1320000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400020,
+      "timestamp": 1735689840,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1360000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400025,
+      "timestamp": 1735689900,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1400000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400030,
+      "timestamp": 1735689960,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1440000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400035,
+      "timestamp": 1735690020,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1480000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400040,
+      "timestamp": 1735690080,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1520000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400045,
+      "timestamp": 1735690140,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1560000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400050,
+      "timestamp": 1735690200,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1600000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400055,
+      "timestamp": 1735690260,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1640000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400060,
+      "timestamp": 1735690320,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1680000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400065,
+      "timestamp": 1735690380,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1720000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400070,
+      "timestamp": 1735690440,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1760000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400075,
+      "timestamp": 1735690500,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1800000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400080,
+      "timestamp": 1735690560,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1840000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400085,
+      "timestamp": 1735690620,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1880000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400090,
+      "timestamp": 1735690680,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1920000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400095,
+      "timestamp": 1735690740,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "1960000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400100,
+      "timestamp": 1735690800,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2000000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400105,
+      "timestamp": 1735690860,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2040000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400110,
+      "timestamp": 1735690920,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2080000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400115,
+      "timestamp": 1735690980,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2120000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400120,
+      "timestamp": 1735691040,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2160000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400125,
+      "timestamp": 1735691100,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2200000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400130,
+      "timestamp": 1735691160,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2240000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400135,
+      "timestamp": 1735691220,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2280000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400140,
+      "timestamp": 1735691280,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2320000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400145,
+      "timestamp": 1735691340,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2360000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400150,
+      "timestamp": 1735691400,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2400000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400155,
+      "timestamp": 1735691460,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2440000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400160,
+      "timestamp": 1735691520,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2480000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400165,
+      "timestamp": 1735691580,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2520000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400170,
+      "timestamp": 1735691640,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2560000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400175,
+      "timestamp": 1735691700,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2600000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400180,
+      "timestamp": 1735691760,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2640000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400185,
+      "timestamp": 1735691820,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2680000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400190,
+      "timestamp": 1735691880,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2720000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400195,
+      "timestamp": 1735691940,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2760000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400200,
+      "timestamp": 1735692000,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2800000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400205,
+      "timestamp": 1735692060,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2840000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400210,
+      "timestamp": 1735692120,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2880000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400215,
+      "timestamp": 1735692180,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2920000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400220,
+      "timestamp": 1735692240,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "2960000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400225,
+      "timestamp": 1735692300,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3000000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400230,
+      "timestamp": 1735692360,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3040000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400235,
+      "timestamp": 1735692420,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3080000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400240,
+      "timestamp": 1735692480,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3120000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400245,
+      "timestamp": 1735692540,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3160000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400250,
+      "timestamp": 1735692600,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3200000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400255,
+      "timestamp": 1735692660,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3240000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400260,
+      "timestamp": 1735692720,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3280000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400265,
+      "timestamp": 1735692780,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3320000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400270,
+      "timestamp": 1735692840,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3360000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400275,
+      "timestamp": 1735692900,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3400000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400280,
+      "timestamp": 1735692960,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3440000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400285,
+      "timestamp": 1735693020,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3480000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400290,
+      "timestamp": 1735693080,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3520000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400295,
+      "timestamp": 1735693140,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3560000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400300,
+      "timestamp": 1735693200,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3600000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400305,
+      "timestamp": 1735693260,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3640000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400310,
+      "timestamp": 1735693320,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3680000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400315,
+      "timestamp": 1735693380,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3720000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400320,
+      "timestamp": 1735693440,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3760000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400325,
+      "timestamp": 1735693500,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3800000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400330,
+      "timestamp": 1735693560,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3840000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400335,
+      "timestamp": 1735693620,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3880000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400340,
+      "timestamp": 1735693680,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3920000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400345,
+      "timestamp": 1735693740,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "3960000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400350,
+      "timestamp": 1735693800,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4000000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400355,
+      "timestamp": 1735693860,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4040000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400360,
+      "timestamp": 1735693920,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4080000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400365,
+      "timestamp": 1735693980,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4120000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400370,
+      "timestamp": 1735694040,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4160000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400375,
+      "timestamp": 1735694100,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4200000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400380,
+      "timestamp": 1735694160,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4240000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400385,
+      "timestamp": 1735694220,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4280000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400390,
+      "timestamp": 1735694280,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4320000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400395,
+      "timestamp": 1735694340,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4360000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400400,
+      "timestamp": 1735694400,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4400000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400405,
+      "timestamp": 1735694460,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4440000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400410,
+      "timestamp": 1735694520,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4480000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400415,
+      "timestamp": 1735694580,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4520000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400420,
+      "timestamp": 1735694640,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4560000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400425,
+      "timestamp": 1735694700,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4600000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400430,
+      "timestamp": 1735694760,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4640000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400435,
+      "timestamp": 1735694820,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4680000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400440,
+      "timestamp": 1735694880,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4720000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400445,
+      "timestamp": 1735694940,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4760000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400450,
+      "timestamp": 1735695000,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4800000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400455,
+      "timestamp": 1735695060,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4840000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400460,
+      "timestamp": 1735695120,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4880000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400465,
+      "timestamp": 1735695180,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4920000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400470,
+      "timestamp": 1735695240,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "4960000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400475,
+      "timestamp": 1735695300,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "5000000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400480,
+      "timestamp": 1735695360,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "5040000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400485,
+      "timestamp": 1735695420,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "5080000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400490,
+      "timestamp": 1735695480,
+      "groundTruth": {
+        "shouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "newWorkflow": {
+        "wouldAct": true,
+        "reason": "Pending rewards exceed the compounding threshold; compound."
+      },
+      "chainState": {
+        "pendingRewardsWei": "5120000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    },
+    {
+      "block": 21400495,
+      "timestamp": 1735695540,
+      "groundTruth": {
+        "shouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "newWorkflow": {
+        "wouldAct": false,
+        "reason": "Condition not met; no action required."
+      },
+      "chainState": {
+        "pendingRewardsWei": "5160000000000000000",
+        "thresholdWei": "1000000000000000000"
+      }
+    }
+  ],
+  "windowBlocks": 500,
+  "averageBlockTimeSeconds": 12
+}

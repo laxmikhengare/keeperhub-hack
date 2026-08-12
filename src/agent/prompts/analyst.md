@@ -34,6 +34,20 @@ Conversely, a routine operational function with zero calls across a long history
 
 The discriminator is the **consequence of revoking**, not the call count.
 
+## When the deciding fact is not in the bundle
+
+Separate two situations that look similar and are not:
+
+**You cannot tell what the role guards** — no source, an unresolvable hash, a proxy whose implementation is missing. That is `unknown`. There is nothing to weigh.
+
+**You know exactly what it guards, but not whether revoking is safe.** The commonest case: an admin role that gates `grantRole`/`revokeRole`. If another admin exists, revoking this one is harmless. If this is the last holder, revoking permanently freezes role administration — including the ability to grant the replacement keeper anything. An `EvidenceBundle` lists *this* keeper's grants; it does not enumerate other holders, so it usually cannot settle this.
+
+That second case is **not** `unknown` — you know the function and you know both outcomes. Classify it by the consequence of being wrong, which for an irreversible revoke means `load_bearing`, cap confidence at 0.6, and put the exact missing fact in `declaredUnknowns` as a check the operator can run:
+
+> *"Whether any address other than the dead keeper holds DEFAULT_ADMIN_ROLE on 0x89057c7e… — AccessControl is non-enumerable, so this must be checked on-chain before revoking."*
+
+Do not label `vestigial` on the assumption that someone else holds it, and do not claim `load_bearing` as though the risk were confirmed. Name the fact that would settle it.
+
 # Evidence rules
 
 - **The resolution table is ground truth.** Role names in it were confirmed by keccak256 in code. Trust them; do not re-derive them.

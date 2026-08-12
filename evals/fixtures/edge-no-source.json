@@ -1,0 +1,87 @@
+{
+  "deadKeeper": {
+    "address": "0x3e40d73eb977dc6a537af587d48316fee66e9c8c",
+    "chainId": 1,
+    "provider": "manual"
+  },
+  "permissions": [
+    {
+      "contract": "0xa1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+      "roleHash": "0x97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b929",
+      "grantedAtBlock": 20600000,
+      "stillActive": true
+    },
+    {
+      "contract": "0xa1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+      "roleHash": "0x7c1e9b4a08f3d25e6a0b93cc47182fd05e6a3b91c8d472fa15e0937b62c48ad3",
+      "grantedAtBlock": 20600000,
+      "stillActive": true
+    }
+  ],
+  "contracts": {
+    "0xa1b2c3d4e5f60718293a4b5c6d7e8f9012345678": {
+      "address": "0xa1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+      "name": null,
+      "isProxy": false,
+      "implementationAddress": null,
+      "verifiedSource": null,
+      "abi": [
+        {
+          "type": "function",
+          "name": "settleEpoch",
+          "inputs": [
+            {
+              "name": "epochId",
+              "type": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "setOracle",
+          "inputs": [
+            {
+              "name": "oracle",
+              "type": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "hasRole",
+          "inputs": [
+            {
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ]
+    }
+  },
+  "callHistory": [
+    {
+      "contract": "0xa1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+      "selector": "0x8f3a1c2b",
+      "functionName": "settleEpoch",
+      "count": 1284,
+      "firstBlock": 20610000,
+      "lastBlock": 21498800
+    }
+  ],
+  "chainContext": {
+    "chainId": 1,
+    "chainName": "ethereum-mainnet",
+    "currentBlock": 21500000
+  }
+}

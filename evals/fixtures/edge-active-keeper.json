@@ -1,0 +1,104 @@
+{
+  "deadKeeper": {
+    "address": "0x3e40d73eb977dc6a537af587d48316fee66e9c8c",
+    "chainId": 1,
+    "provider": "manual"
+  },
+  "upkeep": {
+    "id": "84920174455092375028374650192837465019283746501928374650192837465",
+    "targetContract": "0xd4e5f60718293a4b5c6d7e8f9012345678901234",
+    "checkFunctionSig": "checkUpkeep(bytes) returns (bool,bytes)",
+    "performFunctionSig": "performUpkeep(bytes)",
+    "adminAddress": "0x3e40d73eb977dc6a537af587d48316fee66e9c8c",
+    "balance": "785000000000000000"
+  },
+  "permissions": [
+    {
+      "contract": "0xd4e5f60718293a4b5c6d7e8f9012345678901234",
+      "roleHash": "0xfc8737ab85eb45125971625a9ebdb75cc78e01d5c1fa80c4c6e5203f47bc4fab",
+      "grantedAtBlock": 20300000,
+      "stillActive": true
+    },
+    {
+      "contract": "0xd4e5f60718293a4b5c6d7e8f9012345678901234",
+      "roleHash": "0xe6ad9a47fbda1dc18de1eb5eeb7d935e5e81b4748f3cfc61e233e64f88182060",
+      "grantedAtBlock": 20300000,
+      "stillActive": true
+    },
+    {
+      "contract": "0xd4e5f60718293a4b5c6d7e8f9012345678901234",
+      "roleHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "grantedAtBlock": 20300000,
+      "stillActive": true
+    }
+  ],
+  "contracts": {
+    "0xd4e5f60718293a4b5c6d7e8f9012345678901234": {
+      "address": "0xd4e5f60718293a4b5c6d7e8f9012345678901234",
+      "name": "RateUpdater",
+      "isProxy": false,
+      "implementationAddress": null,
+      "verifiedSource": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.20;\n\nimport \"@openzeppelin/contracts/access/AccessControl.sol\";\n\n/// @notice Chainlink-compatible automation target for a lending market.\ncontract RateUpdater is AccessControl {\n    bytes32 public constant KEEPER_ROLE = keccak256(\"KEEPER_ROLE\");\n    bytes32 public constant FEE_SETTER_ROLE = keccak256(\"FEE_SETTER_ROLE\");\n\n    address public feeRecipient;\n    uint256 public lastUpdate;\n\n    function checkUpkeep(bytes calldata)\n        external\n        view\n        returns (bool upkeepNeeded, bytes memory performData)\n    {\n        upkeepNeeded = block.timestamp - lastUpdate > 1 hours;\n        performData = \"\";\n    }\n\n    /// @dev The automation entrypoint. Guarded by KEEPER_ROLE.\n    function performUpkeep(bytes calldata) external onlyRole(KEEPER_ROLE) {\n        lastUpdate = block.timestamp;\n        _accrueInterest();\n    }\n\n    /// @dev Operational convenience. Several admins hold this role.\n    function setFeeRecipient(address recipient) external onlyRole(FEE_SETTER_ROLE) {\n        feeRecipient = recipient;\n    }\n\n    function _accrueInterest() internal {}\n}\n",
+      "abi": [
+        {
+          "type": "function",
+          "name": "checkUpkeep",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "performUpkeep",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "setFeeRecipient",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "feeRecipient",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ]
+    }
+  },
+  "callHistory": [
+    {
+      "contract": "0xd4e5f60718293a4b5c6d7e8f9012345678901234",
+      "selector": "0x4585e33b",
+      "functionName": "performUpkeep",
+      "count": 8642,
+      "firstBlock": 20301000,
+      "lastBlock": 21499760
+    }
+  ],
+  "chainContext": {
+    "chainId": 1,
+    "chainName": "ethereum-mainnet",
+    "currentBlock": 21500000
+  }
+}

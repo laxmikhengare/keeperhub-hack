@@ -1,0 +1,61 @@
+{
+  "deadKeeper": {
+    "address": "0x3e40d73eb977dc6a537af587d48316fee66e9c8c",
+    "chainId": 1,
+    "provider": "manual"
+  },
+  "permissions": [
+    {
+      "contract": "0xb2c3d4e5f60718293a4b5c6d7e8f901234567890",
+      "roleHash": "0x3fc733b4d20d27a28452ddf0e9351aced28242fe03389a653cdb783955316b9b",
+      "grantedAtBlock": 21000000,
+      "stillActive": true
+    },
+    {
+      "contract": "0xb2c3d4e5f60718293a4b5c6d7e8f901234567890",
+      "roleHash": "0x3d9f0c71a2e845bb61c0f38d94a7e2150b6c48fa3e97d215806b4cf39e1a7d62",
+      "grantedAtBlock": 21000000,
+      "stillActive": true
+    }
+  ],
+  "contracts": {
+    "0xb2c3d4e5f60718293a4b5c6d7e8f901234567890": {
+      "address": "0xb2c3d4e5f60718293a4b5c6d7e8f901234567890",
+      "name": "YieldVault",
+      "isProxy": false,
+      "implementationAddress": null,
+      "verifiedSource": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.19;\n\nimport \"@openzeppelin/contracts/access/AccessControl.sol\";\n\n/// @notice Yield vault with a single operational role.\ncontract YieldVault is AccessControl {\n    bytes32 public constant HARVESTER_ROLE = keccak256(\"HARVESTER_ROLE\");\n\n    uint256 public lastHarvest;\n\n    function harvest() external onlyRole(HARVESTER_ROLE) {\n        lastHarvest = block.timestamp;\n    }\n}\n",
+      "abi": [
+        {
+          "type": "function",
+          "name": "harvest",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "lastHarvest",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ]
+    }
+  },
+  "callHistory": [
+    {
+      "contract": "0xb2c3d4e5f60718293a4b5c6d7e8f901234567890",
+      "selector": "0x4641257d",
+      "functionName": "harvest",
+      "count": 806,
+      "firstBlock": 21005000,
+      "lastBlock": 21499600
+    }
+  ],
+  "chainContext": {
+    "chainId": 1,
+    "chainName": "ethereum-mainnet",
+    "currentBlock": 21500000
+  }
+}
