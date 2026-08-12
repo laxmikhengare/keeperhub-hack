@@ -21,3 +21,9 @@ dist/
 
 # Archives
 *.zip
+
+# Foundry
+contracts/lib/
+contracts/out/
+contracts/cache/
+broadcast/
