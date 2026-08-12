@@ -9,8 +9,18 @@ import type * as z from 'zod/v4';
 
 import { AgentConfigError, AgentRefusalError, AgentSchemaError, AgentTimeoutError } from './errors.js';
 
-/** The model the spec pins. Do not change without re-running the eval suite. */
-export const PRIMARY_MODEL = 'claude-opus-5';
+/**
+ * The model the spec pins. Do not change the default without re-running the
+ * eval suite — the 93.1% / 100% scores in the README were measured on it.
+ *
+ * `UNDERSTUDY_MODEL` overrides it for cost-constrained runs. Any override must
+ * be from the Claude 4.6+ family: this client sends adaptive thinking and
+ * `output_config.effort`, and older models (Haiku 4.5, Sonnet 4.5) reject both
+ * — Haiku errors on `effort` and needs `thinking.budget_tokens` instead.
+ * `claude-sonnet-5` is the safe cheaper option: same request shape, no code
+ * change, roughly half the token cost.
+ */
+export const PRIMARY_MODEL = process.env['UNDERSTUDY_MODEL'] ?? 'claude-opus-5';
 
 /**
  * Where a refused request goes.
@@ -21,9 +31,42 @@ export const PRIMARY_MODEL = 'claude-opus-5';
  * rather than via the server-side `fallbacks` beta, because `.parse()` lives on
  * the non-beta client and mixing the two is not worth the complexity here.
  */
-export const FALLBACK_MODEL = 'claude-opus-4-8';
+export const FALLBACK_MODEL = process.env['UNDERSTUDY_FALLBACK_MODEL'] ?? 'claude-opus-4-8';
 
 export type Effort = 'low' | 'medium' | 'high' | 'xhigh' | 'max';
+
+/**
+ * Adaptive thinking and `output_config.effort` arrived with the Claude 4.6
+ * family. Older models reject both: `effort` errors outright, and thinking must
+ * be requested as `{type:'enabled', budget_tokens}` with the budget strictly
+ * below max_tokens.
+ *
+ * Haiku 4.5 is the cheapest model that still supports structured outputs, which
+ * is why it is worth accommodating rather than excluding — but it is a
+ * meaningful capability step down from the default, so treat any eval scores
+ * measured on it as a separate baseline rather than comparable to the headline
+ * numbers.
+ */
+function isAdaptiveFamily(model: string): boolean {
+  return /^claude-(opus-(5|4-6|4-7|4-8)|sonnet-(5|4-6)|fable-5|mythos-5)/.test(model);
+}
+
+function modelTuning(model: string, effort: Effort, maxTokens: number) {
+  if (isAdaptiveFamily(model)) {
+    return {
+      thinking: { type: 'adaptive' as const },
+      outputConfig: { effort },
+    };
+  }
+  // Pre-4.6: no effort parameter, explicit thinking budget, must be < max_tokens.
+  return {
+    thinking: {
+      type: 'enabled' as const,
+      budget_tokens: Math.max(1024, Math.floor(maxTokens * 0.4)),
+    },
+    outputConfig: {},
+  };
+}
 
 let cached: Anthropic | null = null;
 
@@ -99,17 +142,19 @@ async function attempt<T extends z.ZodType>(
 ): Promise<Anthropic.Message> {
   const client = getClient();
 
+  const tuning = modelTuning(model, effort, maxTokens);
+
   const stream = client.messages.stream(
     {
       model,
       max_tokens: maxTokens,
-      // Thinking is on by default on Opus 5; state it explicitly for the record.
-      // Never disable it — on this model that has known failure modes (tool
-      // calls emitted as prose, <thinking> tags leaking into output). Lower
-      // `effort` instead when cost or latency matters.
-      thinking: { type: 'adaptive' },
+      // Thinking config and `effort` are model-family dependent — see
+      // modelTuning(). Never disable thinking: on the 4.6+ family that has
+      // known failure modes (tool calls emitted as prose, <thinking> tags
+      // leaking into output). Lower `effort` instead when cost matters.
+      thinking: tuning.thinking,
       output_config: {
-        effort,
+        ...tuning.outputConfig,
         format: zodOutputFormat(opts.schema),
       },
       system: [
