@@ -3,16 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Understudy AI layer — Analyst (permission classification) and Adjudicator (cutover readiness verdict).",
+  "description": "Understudy AI layer \u2014 Analyst (permission classification) and Adjudicator (cutover readiness verdict).",
   "main": "src/agent/index.ts",
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
     "eval": "tsx evals/run.ts",
     "eval:roles": "tsx evals/run.ts --suite=roles",
     "eval:adjudication": "tsx evals/run.ts --suite=adjudication",
     "analyze": "tsx scripts/analyze-fixture.ts",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "scout": "tsx scripts/scout.ts",
+    "migrate": "tsx scripts/migrate.ts",
+    "report": "tsx scripts/report.ts",
+    "build:contracts": "cd contracts && forge build",
+    "deploy:contracts": "cd contracts && forge script script/Deploy.s.sol --rpc-url $SEPOLIA_RPC_URL --broadcast"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",

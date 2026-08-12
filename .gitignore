@@ -27,3 +27,6 @@ contracts/lib/
 contracts/out/
 contracts/cache/
 broadcast/
+
+# Local tooling
+.code-review-graph/
