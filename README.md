@@ -21,7 +21,11 @@ Surfaces exercised            MCP · simulation · audit trail · gas sponsorshi
 | verify ×3 | three real settlements — epochs 8→9→10→11, each confirmed by re-reading the contract. Sponsored **internal** transactions relayed by KeeperHub, so they are not top-level entries on the wallet; see [`runs/`](./runs) |
 | revoke | [`0x3e9d7ffd…`](https://sepolia.etherscan.io/tx/0x3e9d7ffdafeabcd5eeaaf0ca21654e747ea39c74e623ec02e00bf87bbd975eb8) **← the gated one** |
 
-**Also here:** [`docs/report.html`](./docs/report.html) — every run, every transaction, the agent's reasoning · [`docs/deck.html`](./docs/deck.html) — five-plate pitch deck · [`LIMITS.md`](./LIMITS.md) — what's real, what's staged
+**Read it without cloning** — [understudy front door](https://laxmikhengare.github.io/keeperhub-hack/) ·
+[migration report](https://laxmikhengare.github.io/keeperhub-hack/report.html) — every run, every
+transaction, the agent's reasoning ·
+[pitch deck](https://laxmikhengare.github.io/keeperhub-hack/deck.html) — five plates ·
+[`LIMITS.md`](./LIMITS.md) — what's real, what's staged
 
 ---
 
